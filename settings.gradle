@@ -1,0 +1,4 @@
+rootProject.name = 'mcengine-currency'
+
+include 'mcengine-currency-api'
+include 'spigotmc'

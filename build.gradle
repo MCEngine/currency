@@ -1,0 +1,117 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'java'
+}
+
+version = project.findProperty("${project.name}-version") ?: 'unspecified'
+group = 'io.github.mcengine'
+
+allprojects {
+    group = 'io.github.mcengine'
+
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven {
+            url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots'
+
+            // As of Gradle 5.1, you can limit this to only those
+            // dependencies you expect from it
+            content {
+                includeGroup 'org.bukkit'
+                includeGroup 'org.spigotmc'
+            }
+        }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url 'https://oss.sonatype.org/content/repositories/central' }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    // Disable the 'jar' task if needed
+    tasks.named('jar').configure {
+        enabled = false
+    }
+
+    // Get submodules info, ensure version property is not null
+    version = project.findProperty("${project.name}-version") ?: 'unspecified'
+
+	shadowJar {
+		archiveClassifier = null
+	}
+
+    if (project.name == 'mcengine-currency-api') {
+        publishing {
+            repositories {
+                maven {
+                    name = 'GitHubPackages'
+                    url = uri('https://maven.pkg.github.com/MCEngine/currency')
+                    credentials {
+                        username = System.getenv('GIT_USER')
+                        password = System.getenv('MCENGINE_GITHUB_TOKEN_PKG')
+                    }
+                }
+            }
+            publications {
+                mavenJava(MavenPublication) {
+                    artifact(tasks.named('shadowJar').get())
+
+                    pom {
+                        name = 'MCEngine'
+                        url = 'https://github.com/MCEngine/currency'
+
+                        scm {
+                            connection = 'scm:git:git://github.com/MCEngine/currency.git'
+                            developerConnection = 'scm:git:ssh://github.com:MCEngine/currency.git'
+                            url = 'https://github.com/MCEngine/currency'
+                        }
+
+                        developers {
+                            developer {
+                                id = 'JetsadaWijit'
+                                name = 'Jetsada Wijit'
+                                email = 'jetsadawijit@outlook.com'
+                                url = 'https://github.com/JetsadaWijit'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Bukkit server specific configuration
+    if (project.name == 'spigotmc') {
+        processResources {
+            def props = [version: version]
+            inputs.properties(props)
+            filteringCharset 'UTF-8'
+            filesMatching('plugin.yml') {
+                expand(props)
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation project(path: ':mcengine-currency-api', configuration: 'shadow')
+    implementation project(path: ':spigotmc', configuration: 'shadow')
+}
+
+shadowJar {
+    version = null
+    archiveClassifier = null
+    archiveBaseName.set('MCEngineCurrency')
+}
+
+// Disable the 'jar' task if needed
+tasks.named('jar').configure {
+    enabled = false
+}
+
+build.dependsOn(shadowJar)
