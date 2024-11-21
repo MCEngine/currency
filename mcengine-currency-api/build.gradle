@@ -3,5 +3,10 @@ plugins {
 }
 
 dependencies {
+    // Database
+    compileOnly 'mysql:mysql-connector-java:8.0.33'
+    compileOnly 'org.xerial:sqlite-jdbc:3.47.0.0'
+
+    // Server Platform
     compileOnly 'org.spigotmc:spigot-api:1.21.3-R0.1-SNAPSHOT'
 }
