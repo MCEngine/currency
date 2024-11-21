@@ -46,6 +46,8 @@ subprojects {
 	}
 
     if (project.name == 'mcengine-currency-api') {
+        apply plugin: 'maven-publish'
+
         publishing {
             repositories {
                 maven {
