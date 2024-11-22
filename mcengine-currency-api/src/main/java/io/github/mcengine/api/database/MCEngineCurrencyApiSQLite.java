@@ -9,7 +9,7 @@ public class MCEngineCurrencyApiSQLite {
 
     public void connect() {
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:plugs/MCEngineCurrency/currency.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:plugins/MCEngineCurrency/currency.db");
             System.out.println("Connected to SQLite database");
         } catch (SQLException e) {
             e.printStackTrace();
