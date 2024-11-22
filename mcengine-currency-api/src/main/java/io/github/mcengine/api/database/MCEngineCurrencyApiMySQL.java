@@ -60,8 +60,8 @@ public class MCEngineCurrencyApiMySQL {
     }
 
     public void insertCurrency(String playerUuid, double coin, double copper, double silver, double gold) {
-        String insertSQL = "INSERT INTO currency (player_uuid, coin, copper, silver, gold) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(insertSQL)) {
+        String query = "INSERT INTO currency (player_uuid, coin, copper, silver, gold) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE player_uuid = player_uuid;";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, playerUuid);
             pstmt.setDouble(2, coin);
             pstmt.setDouble(3, copper);
