@@ -61,7 +61,7 @@ public class MCEngineCurrencyApi {
         }
     }
 
-    public void disconnect() {
+    public void disConnect() {
         try {
             databaseInstance.getClass().getMethod("disConnection").invoke(databaseInstance);
         } catch (Exception e) {
