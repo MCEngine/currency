@@ -7,15 +7,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class MCEngineCurrencyApiSQLite {
+    private final String dbPath;
     private Connection connection;
+
+    public MCEngineCurrencyApiSQLite(String dbPath) {
+        this.dbPath = dbPath;
+    }
 
     // Establish connection to SQLite
     public void connect() {
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:plugins/MCEngineCurrency/currency.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
             System.out.println("Connected to SQLite database.");
         } catch (SQLException e) {
-            System.err.println("Failed to connect to SQLite database." + e.getMessage());
+            System.err.println("Failed to connect to SQLite database: " + e.getMessage());
         }
     }
 
