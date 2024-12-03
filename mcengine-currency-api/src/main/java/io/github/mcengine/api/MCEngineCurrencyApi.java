@@ -9,12 +9,15 @@ public class MCEngineCurrencyApi {
         Object tempInstance = null;
         try {
             if (sqlType.equalsIgnoreCase("mysql")) {
-                Class<?> clazz = Class.forName("io.github.mcengine.api.database.MCEngineCurrencyApiMySQL");
-                tempInstance = clazz.getDeclaredConstructor(String.class, String.class, String.class, String.class, String.class)
-                        .newInstance(sqlInfo[0], sqlInfo[1], sqlInfo[2], sqlInfo[3], sqlInfo[4]);
+                tempInstance = initializeDatabase(
+                        "io.github.mcengine.api.database.MCEngineCurrencyApiMySQL",
+                        sqlInfo[0], sqlInfo[1], sqlInfo[2], sqlInfo[3], sqlInfo[4]
+                );
             } else if (sqlType.equalsIgnoreCase("sqlite")) {
-                Class<?> clazz = Class.forName("io.github.mcengine.api.database.MCEngineCurrencyApiSQLite");
-                tempInstance = clazz.getDeclaredConstructor(String.class).newInstance(sqlInfo[0]);
+                tempInstance = initializeDatabase(
+                        "io.github.mcengine.api.database.MCEngineCurrencyApiSQLite",
+                        sqlInfo[0]
+                );
             } else {
                 throw new IllegalArgumentException("Unsupported SQL type: " + sqlType);
             }
@@ -24,23 +27,22 @@ public class MCEngineCurrencyApi {
         this.databaseInstance = tempInstance;
     }
 
-    public void initDB() {
-        try {
-            databaseInstance.getClass().getMethod("connect").invoke(databaseInstance);
-            databaseInstance.getClass().getMethod("createTable").invoke(databaseInstance);
-        } catch (Exception e) {
-            throw new RuntimeException("Error initializing database: " + e.getMessage(), e);
+    private Object initializeDatabase(String className, Object... constructorArgs) throws Exception {
+        Class<?> clazz = Class.forName(className);
+        Class<?>[] parameterTypes = new Class[constructorArgs.length];
+        for (int i = 0; i < constructorArgs.length; i++) {
+            parameterTypes[i] = constructorArgs[i].getClass();
         }
+        return clazz.getConstructor(parameterTypes).newInstance(constructorArgs);
+    }
+
+    public void initDB() {
+        invokeMethod("connect");
+        invokeMethod("createTable");
     }
 
     public void initPlayerData(UUID uuid) {
-        try {
-            databaseInstance.getClass()
-                .getMethod("insertCurrency", String.class, double.class, double.class, double.class, double.class)
-                .invoke(databaseInstance, uuid.toString(), 0.0, 0.0, 0.0, 0.0);
-        } catch (Exception e) {
-            throw new RuntimeException("Error initializing player data: " + e.getMessage(), e);
-        }
+        invokeMethod("insertCurrency", uuid.toString(), 0.0, 0.0, 0.0, 0.0);
     }
 
     public void addCoin(UUID uuid, String coinType, double amt) {
@@ -52,20 +54,22 @@ public class MCEngineCurrencyApi {
     }
 
     private void updateCurrency(UUID uuid, String operator, String coinType, double amt) {
-        try {
-            databaseInstance.getClass()
-                .getMethod("updateCurrencyValue", String.class, String.class, String.class, double.class)
-                .invoke(databaseInstance, uuid.toString(), operator, coinType, amt);
-        } catch (Exception e) {
-            throw new RuntimeException("Error updating currency: " + e.getMessage(), e);
-        }
+        invokeMethod("updateCurrencyValue", uuid.toString(), operator, coinType, amt);
     }
 
     public void disConnect() {
+        invokeMethod("disConnection");
+    }
+
+    private void invokeMethod(String methodName, Object... args) {
         try {
-            databaseInstance.getClass().getMethod("disConnection").invoke(databaseInstance);
+            Class<?>[] argTypes = new Class[args.length];
+            for (int i = 0; i < args.length; i++) {
+                argTypes[i] = args[i].getClass();
+            }
+            databaseInstance.getClass().getMethod(methodName, argTypes).invoke(databaseInstance, args);
         } catch (Exception e) {
-            throw new RuntimeException("Error disconnecting database: " + e.getMessage(), e);
+            throw new RuntimeException("Error invoking method '" + methodName + "': " + e.getMessage(), e);
         }
     }
 }
