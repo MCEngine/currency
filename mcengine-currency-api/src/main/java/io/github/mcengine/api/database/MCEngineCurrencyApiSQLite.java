@@ -68,7 +68,7 @@ public class MCEngineCurrencyApiSQLite {
             pstmt.setDouble(4, silver);
             pstmt.setDouble(5, gold);
             pstmt.executeUpdate();
-            System.out.println("Currency information added for player_uuid: " + playerUuid);
+            System.out.println("Currency information added for player uuid: " + playerUuid);
         } catch (SQLException e) {
             System.err.println("Error inserting currency for player uuid: " + playerUuid + " - " + e.getMessage());
         }
