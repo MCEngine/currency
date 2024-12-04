@@ -88,6 +88,20 @@ public class MCEngineCurrencyApi {
     }
 
     /**
+     * Records a transaction between two players in the database.
+     *
+     * @param playerUuidSender the unique identifier of the sender
+     * @param playerUuidReceiver the unique identifier of the receiver
+     * @param currencyType the type of currency involved in the transaction (e.g., "coin", "copper")
+     * @param transactionType the type of transaction (e.g., "pay", "purchase")
+     * @param amount the amount of currency involved
+     * @param notes optional notes for the transaction
+     */
+    public void createTransaction(UUID playerUuidSender, UUID playerUuidReceiver, String currencyType, String transactionType, double amount, String notes) {
+        invokeMethod("insertTransaction", playerUuidSender.toString(), playerUuidReceiver.toString(), currencyType, transactionType, amount, notes);
+    }
+
+    /**
      * Disconnects from the database.
      */
     public void disConnect() {
