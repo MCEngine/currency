@@ -2,7 +2,7 @@ package io.github.mcengine.api;
 
 import java.util.UUID;
 
-import io.github.mcengine.api.MCEngineCurrencyApiUtil;
+import io.github.mcengine.api.MCEngineApiUtil;
 
 public class MCEngineCurrencyApi {
     private final Object databaseInstance;
@@ -11,12 +11,12 @@ public class MCEngineCurrencyApi {
         Object tempInstance = null;
         try {
             if (sqlType.equalsIgnoreCase("mysql")) {
-                tempInstance = MCEngineCurrencyApiUtil.initializeDatabase(
+                tempInstance = MCEngineApiUtil.initialize(
                         "io.github.mcengine.api.database.MCEngineCurrencyApiMySQL",
                         sqlInfo[0], sqlInfo[1], sqlInfo[2], sqlInfo[3], sqlInfo[4]
                 );
             } else if (sqlType.equalsIgnoreCase("sqlite")) {
-                tempInstance = MCEngineCurrencyApiUtil.initializeDatabase(
+                tempInstance = MCEngineApiUtil.initialize(
                         "io.github.mcengine.api.database.MCEngineCurrencyApiSQLite",
                         sqlInfo[0]
                 );
@@ -33,8 +33,8 @@ public class MCEngineCurrencyApi {
      * Initializes the database by connecting and creating the necessary table.
      */
     public void initDB() {
-        MCEngineCurrencyApiUtil.invokeMethod(databaseInstance, "connect");
-        MCEngineCurrencyApiUtil.invokeMethod(databaseInstance, "createTable");
+        MCEngineApiUtil.invokeMethod(databaseInstance, "connect");
+        MCEngineApiUtil.invokeMethod(databaseInstance, "createTable");
     }
 
     /**
@@ -43,7 +43,7 @@ public class MCEngineCurrencyApi {
      * @param uuid the unique identifier of the player
      */
     public void initPlayerData(UUID uuid) {
-        MCEngineCurrencyApiUtil.invokeMethod(databaseInstance, "insertCurrency", uuid.toString(), 0.0, 0.0, 0.0, 0.0);
+        MCEngineApiUtil.invokeMethod(databaseInstance, "insertCurrency", uuid.toString(), 0.0, 0.0, 0.0, 0.0);
     }
 
     /**
@@ -77,7 +77,7 @@ public class MCEngineCurrencyApi {
      * @param amt the amount of coin to update
      */
     private void updateCurrency(UUID uuid, String operator, String coinType, double amt) {
-        MCEngineCurrencyApiUtil.invokeMethod(databaseInstance, "updateCurrencyValue", uuid.toString(), operator, coinType, amt);
+        MCEngineApiUtil.invokeMethod(databaseInstance, "updateCurrencyValue", uuid.toString(), operator, coinType, amt);
     }
 
     /**
@@ -91,13 +91,13 @@ public class MCEngineCurrencyApi {
      * @param notes optional notes for the transaction
      */
     public void createTransaction(UUID playerUuidSender, UUID playerUuidReceiver, String currencyType, String transactionType, double amount, String notes) {
-        MCEngineCurrencyApiUtil.invokeMethod(databaseInstance, "insertTransaction", playerUuidSender.toString(), playerUuidReceiver.toString(), currencyType, transactionType, amount, notes);
+        MCEngineApiUtil.invokeMethod(databaseInstance, "insertTransaction", playerUuidSender.toString(), playerUuidReceiver.toString(), currencyType, transactionType, amount, notes);
     }
 
     /**
      * Disconnects from the database.
      */
     public void disConnect() {
-        MCEngineCurrencyApiUtil.invokeMethod(databaseInstance, "disConnection");
+        MCEngineApiUtil.invokeMethod(databaseInstance, "disConnection");
     }
 }
