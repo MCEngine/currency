@@ -52,20 +52,54 @@ public class MCEngineCurrencyApiSQLite {
         }
     }
 
-    // Create the currency table if it doesn't exist
+    /**
+     * Creates the 'currency' and 'currency_transaction' tables in the database if they do not exist.
+     * 
+     * @param connection The active database connection used to execute SQL statements.
+     * 
+     * The 'currency' table stores player-specific balances for different currency types:
+     * - player_uuid: Unique identifier for the player (primary key).
+     * - coin, copper, silver, gold: Decimal values representing the player's balance for each currency type.
+     * 
+     * The 'currency_transaction' table records individual transactions involving currency:
+     * - transaction_id: Unique identifier for each transaction (primary key, auto-incremented).
+     * - player_uuid: Identifier linking the transaction to a player (foreign key referencing 'currency.player_uuid').
+     * - currency_type: Specifies the type of currency involved ('coin', 'copper', 'silver', or 'gold').
+     * - transaction_type: Indicates the type of transaction ('credit' or 'debit').
+     * - amount: The amount of currency involved in the transaction.
+     * - timestamp: Automatically records the time of the transaction.
+     * - notes: Optional field for additional transaction details.
+     */
     public void createTable() {
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS currency ("
+        // SQL for creating the 'currency' table
+        String createCurrencyTableSQL = "CREATE TABLE IF NOT EXISTS currency ("
             + "player_uuid CHAR(36) PRIMARY KEY, "
             + "coin DECIMAL(10,2), "
             + "copper DECIMAL(10,2), "
             + "silver DECIMAL(10,2), "
             + "gold DECIMAL(10,2));";
 
+        // SQL for creating the 'currency_transaction' table
+        String createTransactionTableSQL = "CREATE TABLE IF NOT EXISTS currency_transaction ("
+            + "transaction_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + "player_uuid CHAR(36) NOT NULL, "
+            + "currency_type TEXT CHECK(currency_type IN ('coin', 'copper', 'silver', 'gold')) NOT NULL, "
+            + "transaction_type TEXT CHECK(transaction_type IN ('credit', 'debit')) NOT NULL, "
+            + "amount DECIMAL(10,2) NOT NULL, "
+            + "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, "
+            + "notes TEXT, "
+            + "FOREIGN KEY (player_uuid) REFERENCES currency(player_uuid));";
+
         try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate(createTableSQL);
+            // Execute the SQL to create the 'currency' table
+            stmt.executeUpdate(createCurrencyTableSQL);
             System.out.println("Table 'currency' created successfully in SQLite database.");
+
+            // Execute the SQL to create the 'currency_transaction' table
+            stmt.executeUpdate(createTransactionTableSQL);
+            System.out.println("Table 'currency_transaction' created successfully in SQLite database.");
         } catch (SQLException e) {
-            System.err.println("Error creating table 'currency': " + e.getMessage());
+            System.err.println("Error creating tables: " + e.getMessage());
         }
     }
 
