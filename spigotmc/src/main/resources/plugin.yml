@@ -4,3 +4,4 @@ main: io.github.mcengine.MCEngineCurrency
 author: MCEngine
 description: MCEngine Currency
 api-version: 1.18
+depen: [MCEngine]
