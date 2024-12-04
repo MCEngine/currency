@@ -10,11 +10,17 @@ public class MCEngineCurrencyApiSQLite {
     private final String dbPath;
     private Connection connection;
 
+    /**
+     * Constructor to initialize the SQLite API with a database path.
+     * @param dbPath the path to the SQLite database file.
+     */
     public MCEngineCurrencyApiSQLite(String dbPath) {
         this.dbPath = dbPath;
     }
 
-    // Establish connection to SQLite
+    /**
+     * Establishes a connection to the SQLite database.
+     */
     public void connect() {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
@@ -24,12 +30,17 @@ public class MCEngineCurrencyApiSQLite {
         }
     }
 
-    // Get the current connection
+    /**
+     * Returns the current connection to the SQLite database.
+     * @return the current {@link Connection}.
+     */
     public Connection getConnection() {
         return connection;
     }
 
-    // Disconnect from SQLite
+    /**
+     * Disconnects from the SQLite database.
+     */
     public void disConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -58,7 +69,14 @@ public class MCEngineCurrencyApiSQLite {
         }
     }
 
-    // Insert currency information
+    /**
+     * Inserts currency information for a player into the database.
+     * @param playerUuid the unique identifier for the player.
+     * @param coin the amount of coin currency.
+     * @param copper the amount of copper currency.
+     * @param silver the amount of silver currency.
+     * @param gold the amount of gold currency.
+     */
     public void insertCurrency(String playerUuid, double coin, double copper, double silver, double gold) {
         String query = "INSERT INTO currency (player_uuid, coin, copper, silver, gold) VALUES (?, ?, ?, ?, ?) ON CONFLICT(player_uuid) DO NOTHING;";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -74,6 +92,14 @@ public class MCEngineCurrencyApiSQLite {
         }
     }
 
+    /**
+     * Updates a specific type of currency for a player.
+     * @param playerUuid the unique identifier for the player.
+     * @param operator the SQL operator to apply (+, -, etc.).
+     * @param coinType the type of currency to update (coin, copper, silver, or gold).
+     * @param amt the amount by which to update the currency.
+     * @throws IllegalArgumentException if the coinType is invalid.
+     */
     public void updateCurrencyValue(String playerUuid, String operator, String coinType, double amt) {
         // Validate coinType against allowed columns
         if (!coinType.matches("coin|copper|silver|gold")) {

@@ -10,6 +10,15 @@ public class MCEngineCurrencyApiMySQL {
     private final String dbHost, dbPort, dbName, dbUser, dbPassword;
     private Connection connection;
 
+    /**
+     * Constructs an instance of MCEngineCurrencyApiMySQL.
+     *
+     * @param dbHost     the database host address
+     * @param dbPort     the database port number
+     * @param dbName     the name of the database
+     * @param dbUser     the username for the database connection
+     * @param dbPassword the password for the database connection
+     */
     public MCEngineCurrencyApiMySQL(String dbHost, String dbPort, String dbName, String dbUser, String dbPassword) {
         this.dbHost = dbHost;
         this.dbPort = dbPort;
@@ -18,6 +27,9 @@ public class MCEngineCurrencyApiMySQL {
         this.dbPassword = dbPassword;
     }
 
+    /**
+     * Establishes a connection to the MySQL database.
+     */
     public void connect() {
         String dbUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useSSL=false&serverTimezone=UTC";
         try {
@@ -28,10 +40,18 @@ public class MCEngineCurrencyApiMySQL {
         }
     }
 
+    /**
+     * Returns the active database connection.
+     *
+     * @return the current database connection
+     */
     public Connection getConnection() {
         return connection;
     }
 
+    /**
+     * Closes the current database connection.
+     */
     public void disConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -43,6 +63,9 @@ public class MCEngineCurrencyApiMySQL {
         }
     }
 
+    /**
+     * Creates the required tables in the database if they do not already exist.
+     */
     public void createTable() {
         // SQL for creating the 'currency' table
         String createCurrencyTableSQL = "CREATE TABLE IF NOT EXISTS currency ("
@@ -76,6 +99,15 @@ public class MCEngineCurrencyApiMySQL {
         }
     }    
 
+    /**
+     * Inserts or updates a player's currency values in the database.
+     *
+     * @param playerUuid the unique identifier for the player
+     * @param coin       the amount of coin currency
+     * @param copper     the amount of copper currency
+     * @param silver     the amount of silver currency
+     * @param gold       the amount of gold currency
+     */
     public void insertCurrency(String playerUuid, double coin, double copper, double silver, double gold) {
         String query = "INSERT INTO currency (player_uuid, coin, copper, silver, gold) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE player_uuid = player_uuid;";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -91,6 +123,14 @@ public class MCEngineCurrencyApiMySQL {
         }
     }
 
+    /**
+     * Updates a specific currency value for a player.
+     *
+     * @param playerUuid the unique identifier for the player
+     * @param operator   the operation to perform ('+' or '-')
+     * @param coinType   the type of currency to update (e.g., 'coin', 'copper', 'silver', 'gold')
+     * @param amt        the amount to adjust the currency value by
+     */
     public void updateCurrencyValue(String playerUuid, String operator, String coinType, double amt) {
         // Validate coinType against allowed columns
         if (!coinType.matches("coin|copper|silver|gold")) {
