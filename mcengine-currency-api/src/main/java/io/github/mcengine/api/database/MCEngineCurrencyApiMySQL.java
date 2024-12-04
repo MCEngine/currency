@@ -101,7 +101,7 @@ public class MCEngineCurrencyApiMySQL {
             + "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
             + "notes VARCHAR(255), "
             + "FOREIGN KEY (player_uuid_sender) REFERENCES currency(player_uuid), "
-            + "FOREIGN KEY (player_uuid_receiver) REFERENCES currency(player_uuid);";
+            + "FOREIGN KEY (player_uuid_receiver) REFERENCES currency(player_uuid));";
 
         try (Statement stmt = connection.createStatement()) {
             // Execute the SQL to create the 'currency' table
