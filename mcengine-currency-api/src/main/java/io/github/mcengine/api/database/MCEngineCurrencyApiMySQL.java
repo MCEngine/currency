@@ -166,4 +166,44 @@ public class MCEngineCurrencyApiMySQL {
             System.err.println("Error updating " + coinType + " for player uuid: " + playerUuid + " - " + e.getMessage());
         }
     }
+
+    /**
+     * Inserts a transaction record into the currency_transaction table.
+     * 
+     * @param playerUuidSender the unique identifier of the sender.
+     * @param playerUuidReceiver the unique identifier of the receiver.
+     * @param currencyType the type of currency involved in the transaction (coin, copper, silver, gold).
+     * @param transactionType the type of transaction (pay, purchase).
+     * @param amount the amount of currency involved in the transaction.
+     * @param notes optional notes about the transaction.
+     */
+    public void insertTransaction(String playerUuidSender, String playerUuidReceiver, String currencyType, 
+        String transactionType, double amount, String notes) {
+
+        // Validate currencyType and transactionType
+        if (!currencyType.matches("coin|copper|silver|gold")) {
+            throw new IllegalArgumentException("Invalid currency type: " + currencyType);
+        }
+        if (!transactionType.matches("pay|purchase")) {
+            throw new IllegalArgumentException("Invalid transaction type: " + transactionType);
+        }
+
+        String query = "INSERT INTO currency_transaction (player_uuid_sender, player_uuid_receiver, currency_type, "
+        + "transaction_type, amount, notes) VALUES (?, ?, ?, ?, ?, ?);";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, playerUuidSender);
+            pstmt.setString(2, playerUuidReceiver);
+            pstmt.setString(3, currencyType);
+            pstmt.setString(4, transactionType);
+            pstmt.setDouble(5, amount);
+            pstmt.setString(6, notes);
+
+            pstmt.executeUpdate();
+            System.out.println("Transaction successfully recorded between " 
+            + playerUuidSender + " and " + playerUuidReceiver);
+        } catch (SQLException e) {
+            System.err.println("Error inserting transaction: " + e.getMessage());
+        }
+    }
 }
