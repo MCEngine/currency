@@ -84,7 +84,7 @@ public class MCEngineCurrencyApiSQLite {
             + "transaction_id INTEGER PRIMARY KEY AUTOINCREMENT, "
             + "player_uuid CHAR(36) NOT NULL, "
             + "currency_type TEXT CHECK(currency_type IN ('coin', 'copper', 'silver', 'gold')) NOT NULL, "
-            + "transaction_type TEXT CHECK(transaction_type IN ('credit', 'debit')) NOT NULL, "
+            + "transaction_type TEXT CHECK(transaction_type IN ('pay', 'purchase')) NOT NULL, "
             + "amount DECIMAL(10,2) NOT NULL, "
             + "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, "
             + "notes TEXT, "

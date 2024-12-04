@@ -95,7 +95,7 @@ public class MCEngineCurrencyApiMySQL {
             + "transaction_id INT AUTO_INCREMENT PRIMARY KEY, "
             + "player_uuid CHAR(36) NOT NULL, "
             + "currency_type ENUM('coin', 'copper', 'silver', 'gold') NOT NULL, "
-            + "transaction_type ENUM('credit', 'debit') NOT NULL, "
+            + "transaction_type ENUM('pay', 'purchase') NOT NULL, "
             + "amount DECIMAL(10,2) NOT NULL, "
             + "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
             + "notes VARCHAR(255), "
