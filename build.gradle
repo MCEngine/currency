@@ -16,6 +16,13 @@ allprojects {
         mavenCentral()
         mavenLocal()
         maven {
+            url = uri("https://maven.pkg.github.com/MCEngine/mcengine")
+            credentials {
+                username = System.getenv("GIT_USER")
+                password = System.getenv("MCENGINE_GITHUB_TOKEN_PKG")
+            }
+        }
+        maven {
             url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots'
 
             // As of Gradle 5.1, you can limit this to only those
