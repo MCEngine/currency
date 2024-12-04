@@ -36,27 +36,60 @@ public class MCEngineCurrencyApi {
         return clazz.getConstructor(parameterTypes).newInstance(constructorArgs);
     }    
 
+    /**
+     * Initializes the database by connecting and creating the necessary table.
+     */
     public void initDB() {
         invokeMethod("connect");
         invokeMethod("createTable");
     }
 
+    /**
+     * Initializes player data in the database with default currency values.
+     *
+     * @param uuid the unique identifier of the player
+     */
     public void initPlayerData(UUID uuid) {
         invokeMethod("insertCurrency", uuid.toString(), 0.0, 0.0, 0.0, 0.0);
     }
 
+    /**
+     * Adds a specified amount of a given type of coin to a player's account.
+     *
+     * @param uuid the unique identifier of the player
+     * @param coinType the type of coin to add (e.g., "gold", "silver")
+     * @param amt the amount of coin to add
+     */
     public void addCoin(UUID uuid, String coinType, double amt) {
         updateCurrency(uuid, "+", coinType, amt);
     }
 
+    /**
+     * Deducts a specified amount of a given type of coin from a player's account.
+     *
+     * @param uuid the unique identifier of the player
+     * @param coinType the type of coin to deduct (e.g., "gold", "silver")
+     * @param amt the amount of coin to deduct
+     */
     public void minusCoin(UUID uuid, String coinType, double amt) {
         updateCurrency(uuid, "-", coinType, amt);
     }
 
+    /**
+     * Updates the currency value for a player with a specific operation.
+     *
+     * @param uuid the unique identifier of the player
+     * @param operator the operation to perform ("+" to add, "-" to subtract)
+     * @param coinType the type of coin to update
+     * @param amt the amount of coin to update
+     */
     private void updateCurrency(UUID uuid, String operator, String coinType, double amt) {
         invokeMethod("updateCurrencyValue", uuid.toString(), operator, coinType, amt);
     }
 
+    /**
+     * Disconnects from the database.
+     */
     public void disConnect() {
         invokeMethod("disConnection");
     }
