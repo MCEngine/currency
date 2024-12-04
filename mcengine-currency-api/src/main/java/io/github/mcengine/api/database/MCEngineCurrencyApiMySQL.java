@@ -44,20 +44,37 @@ public class MCEngineCurrencyApiMySQL {
     }
 
     public void createTable() {
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS currency ("
+        // SQL for creating the 'currency' table
+        String createCurrencyTableSQL = "CREATE TABLE IF NOT EXISTS currency ("
             + "player_uuid CHAR(36) PRIMARY KEY, "
             + "coin DECIMAL(10,2), "
             + "copper DECIMAL(10,2), "
             + "silver DECIMAL(10,2), "
             + "gold DECIMAL(10,2));";
-
+    
+        // SQL for creating the 'currency_transaction' table
+        String createTransactionTableSQL = "CREATE TABLE IF NOT EXISTS currency_transaction ("
+            + "transaction_id INT AUTO_INCREMENT PRIMARY KEY, "
+            + "player_uuid CHAR(36) NOT NULL, "
+            + "currency_type ENUM('coin', 'copper', 'silver', 'gold') NOT NULL, "
+            + "transaction_type ENUM('credit', 'debit') NOT NULL, "
+            + "amount DECIMAL(10,2) NOT NULL, "
+            + "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+            + "notes VARCHAR(255), "
+            + "FOREIGN KEY (player_uuid) REFERENCES currency(player_uuid));";
+    
         try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate(createTableSQL);
+            // Execute the SQL to create the 'currency' table
+            stmt.executeUpdate(createCurrencyTableSQL);
             System.out.println("Table 'currency' created successfully in MySQL database.");
+    
+            // Execute the SQL to create the 'currency_transaction' table
+            stmt.executeUpdate(createTransactionTableSQL);
+            System.out.println("Table 'currency_transaction' created successfully in MySQL database.");
         } catch (SQLException e) {
-            System.err.println("Error creating table 'currency': " + e.getMessage());
+            System.err.println("Error creating tables: " + e.getMessage());
         }
-    }
+    }    
 
     public void insertCurrency(String playerUuid, double coin, double copper, double silver, double gold) {
         String query = "INSERT INTO currency (player_uuid, coin, copper, silver, gold) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE player_uuid = player_uuid;";
