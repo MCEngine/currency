@@ -232,4 +232,31 @@ public class MCEngineCurrencyApiMySQL {
             System.err.println("Error inserting transaction: " + e.getMessage());
         }
     }
+
+    /**
+     * Checks if a player with the specified UUID exists in the database.
+     *
+     * @param uuid the UUID of the player to check
+     * @return {@code true} if a player with the specified UUID exists, {@code false} otherwise
+     * @throws SQLException if a database access error occurs
+     *
+     * <p>This method executes a SQL query to count the number of players with the given UUID
+     * in the 'players' table. If the query result is greater than 0, the player exists.</p>
+     *
+     * <p>Note: Exceptions are caught and printed to the standard error stream. Ensure proper
+     * exception handling and logging in production code.</p>
+     */
+    public boolean playerExists(String uuid) {
+        String query = "SELECT COUNT(*) FROM players WHERE uuid = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, uuid);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

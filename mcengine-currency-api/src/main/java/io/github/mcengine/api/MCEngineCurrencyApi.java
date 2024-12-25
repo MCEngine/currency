@@ -116,6 +116,21 @@ public class MCEngineCurrencyApi {
     }
 
     /**
+     * Checks if a player exists in the database.
+     *
+     * @param uuid the unique identifier of the player
+     * @return true if the player exists, false otherwise
+     */
+    public boolean checkIfPlayerExists(UUID uuid) {
+        Object result = MCEngineApiUtil.invokeMethod(databaseInstance, "playerExists", uuid.toString());
+        if (result instanceof Boolean) {
+            return (Boolean) result;
+        } else {
+            throw new RuntimeException("Error checking if player exists in the database.");
+        }
+    }
+
+    /**
      * Disconnects from the database.
      */
     public void disConnect() {
