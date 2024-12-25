@@ -1,4 +1,4 @@
-package io.github.mcengine.api.database;
+package io.github.mcengine.api.database.sqlite;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
