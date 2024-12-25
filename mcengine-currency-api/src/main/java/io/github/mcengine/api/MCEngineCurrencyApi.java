@@ -47,6 +47,27 @@ public class MCEngineCurrencyApi {
     }
 
     /**
+     * Retrieves the balance of a specified coin type for a player.
+     *
+     * @param uuid     the unique identifier of the player
+     * @param coinType the type of coin to retrieve (e.g., "coin", "copper", "silver", "gold")
+     * @return the balance of the specified coin type for the player
+     * @throws IllegalArgumentException if the coinType is invalid
+     */
+    public double getCoin(UUID uuid, String coinType) {
+        if (!coinType.matches("coin|copper|silver|gold")) {
+            throw new IllegalArgumentException("Invalid coin type: " + coinType);
+        }
+
+        Object result = MCEngineApiUtil.invokeMethod(databaseInstance, "getCoin", uuid.toString(), coinType);
+        if (result instanceof Double) {
+            return (Double) result;
+        } else {
+            throw new RuntimeException("Error retrieving coin balance from the database.");
+        }
+    }
+
+    /**
      * Adds a specified amount of a given type of coin to a player's account.
      *
      * @param uuid the unique identifier of the player

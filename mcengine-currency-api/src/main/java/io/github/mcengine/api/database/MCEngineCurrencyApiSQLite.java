@@ -106,6 +106,32 @@ public class MCEngineCurrencyApiSQLite {
     }
 
     /**
+     * Retrieves the amount of a specified coin type for a player from the database.
+     *
+     * @param playerUuid the UUID of the player whose coin balance is to be retrieved
+     * @param coinType   the type of coin to retrieve (e.g., "Copper", "Silver", "Gold")
+     * @return the amount of the specified coin type the player has; returns 0.0 if no record is found or if an error occurs
+     * @throws IllegalArgumentException if the coinType parameter is invalid or null
+     * @implNote This method queries the database table "currency" for the coin balance.
+     *           Ensure that the `connection` object is properly initialized and connected to the database.
+     * @implSpec The `coinType` parameter should match a valid column name in the "currency" table.
+     */
+    public double getCoin(String playerUuid, String coinType) {
+        String query = "SELECT " + coinType + " FROM currency WHERE player_uuid = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, playerUuid);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble(1);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving " + coinType + " for player uuid: " + playerUuid + " - " + e.getMessage());
+        }
+        return 0.0; // Default value if no record is found
+    }
+
+    /**
      * Inserts currency information for a player into the database.
      * @param playerUuid the unique identifier for the player.
      * @param coin the amount of coin currency.
