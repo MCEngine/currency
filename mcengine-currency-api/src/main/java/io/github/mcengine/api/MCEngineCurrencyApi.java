@@ -47,6 +47,53 @@ public class MCEngineCurrencyApi {
     }
 
     /**
+     * Adds a specified amount of a given type of coin to a player's account.
+     *
+     * @param uuid the unique identifier of the player
+     * @param coinType the type of coin to add (e.g., "gold", "silver")
+     * @param amt the amount of coin to add
+     */
+    public void addCoin(UUID uuid, String coinType, double amt) {
+        updateCurrency(uuid, "+", coinType, amt);
+    }
+
+    /**
+     * Checks if a player exists in the database.
+     *
+     * @param uuid the unique identifier of the player
+     * @return true if the player exists, false otherwise
+     */
+    public boolean checkIfPlayerExists(UUID uuid) {
+        Object result = MCEngineApiUtil.invokeMethod(databaseInstance, "playerExists", uuid.toString());
+        if (result instanceof Boolean) {
+            return (Boolean) result;
+        } else {
+            throw new RuntimeException("Error checking if player exists in the database.");
+        }
+    }
+
+    /**
+     * Records a transaction between two players in the database.
+     *
+     * @param playerUuidSender the unique identifier of the sender
+     * @param playerUuidReceiver the unique identifier of the receiver
+     * @param currencyType the type of currency involved in the transaction (e.g., "coin", "copper")
+     * @param transactionType the type of transaction (e.g., "pay", "purchase")
+     * @param amount the amount of currency involved
+     * @param notes optional notes for the transaction
+     */
+    public void createTransaction(UUID playerUuidSender, UUID playerUuidReceiver, String currencyType, String transactionType, double amount, String notes) {
+        MCEngineApiUtil.invokeMethod(databaseInstance, "insertTransaction", playerUuidSender.toString(), playerUuidReceiver.toString(), currencyType, transactionType, amount, notes);
+    }
+
+    /**
+     * Disconnects from the database.
+     */
+    public void disConnect() {
+        MCEngineApiUtil.invokeMethod(databaseInstance, "disConnection");
+    }
+
+    /**
      * Retrieves the balance of a specified coin type for a player.
      *
      * @param uuid     the unique identifier of the player
@@ -65,17 +112,6 @@ public class MCEngineCurrencyApi {
         } else {
             throw new RuntimeException("Error retrieving coin balance from the database.");
         }
-    }
-
-    /**
-     * Adds a specified amount of a given type of coin to a player's account.
-     *
-     * @param uuid the unique identifier of the player
-     * @param coinType the type of coin to add (e.g., "gold", "silver")
-     * @param amt the amount of coin to add
-     */
-    public void addCoin(UUID uuid, String coinType, double amt) {
-        updateCurrency(uuid, "+", coinType, amt);
     }
 
     /**
@@ -99,41 +135,5 @@ public class MCEngineCurrencyApi {
      */
     private void updateCurrency(UUID uuid, String operator, String coinType, double amt) {
         MCEngineApiUtil.invokeMethod(databaseInstance, "updateCurrencyValue", uuid.toString(), operator, coinType, amt);
-    }
-
-    /**
-     * Records a transaction between two players in the database.
-     *
-     * @param playerUuidSender the unique identifier of the sender
-     * @param playerUuidReceiver the unique identifier of the receiver
-     * @param currencyType the type of currency involved in the transaction (e.g., "coin", "copper")
-     * @param transactionType the type of transaction (e.g., "pay", "purchase")
-     * @param amount the amount of currency involved
-     * @param notes optional notes for the transaction
-     */
-    public void createTransaction(UUID playerUuidSender, UUID playerUuidReceiver, String currencyType, String transactionType, double amount, String notes) {
-        MCEngineApiUtil.invokeMethod(databaseInstance, "insertTransaction", playerUuidSender.toString(), playerUuidReceiver.toString(), currencyType, transactionType, amount, notes);
-    }
-
-    /**
-     * Checks if a player exists in the database.
-     *
-     * @param uuid the unique identifier of the player
-     * @return true if the player exists, false otherwise
-     */
-    public boolean checkIfPlayerExists(UUID uuid) {
-        Object result = MCEngineApiUtil.invokeMethod(databaseInstance, "playerExists", uuid.toString());
-        if (result instanceof Boolean) {
-            return (Boolean) result;
-        } else {
-            throw new RuntimeException("Error checking if player exists in the database.");
-        }
-    }
-
-    /**
-     * Disconnects from the database.
-     */
-    public void disConnect() {
-        MCEngineApiUtil.invokeMethod(databaseInstance, "disConnection");
     }
 }

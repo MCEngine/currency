@@ -31,28 +31,6 @@ public class MCEngineCurrencyApiSQLite {
     }
 
     /**
-     * Returns the current connection to the SQLite database.
-     * @return the current {@link Connection}.
-     */
-    public Connection getConnection() {
-        return connection;
-    }
-
-    /**
-     * Disconnects from the SQLite database.
-     */
-    public void disConnection() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-                System.out.println("Disconnected from SQLite database.");
-            }
-        } catch (SQLException e) {
-            System.err.println("Failed to disconnect from SQLite database: " + e.getMessage());
-        }
-    }
-
-    /**
      * Creates the 'currency' and 'currency_transaction' tables in the database if they do not exist.
      * 
      * @param connection The active database connection used to execute SQL statements.
@@ -106,6 +84,20 @@ public class MCEngineCurrencyApiSQLite {
     }
 
     /**
+     * Disconnects from the SQLite database.
+     */
+    public void disConnection() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+                System.out.println("Disconnected from SQLite database.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Failed to disconnect from SQLite database: " + e.getMessage());
+        }
+    }
+
+    /**
      * Retrieves the amount of a specified coin type for a player from the database.
      *
      * @param playerUuid the UUID of the player whose coin balance is to be retrieved
@@ -132,6 +124,14 @@ public class MCEngineCurrencyApiSQLite {
     }
 
     /**
+     * Returns the current connection to the SQLite database.
+     * @return the current {@link Connection}.
+     */
+    public Connection getConnection() {
+        return connection;
+    }
+
+    /**
      * Inserts currency information for a player into the database.
      * @param playerUuid the unique identifier for the player.
      * @param coin the amount of coin currency.
@@ -151,33 +151,6 @@ public class MCEngineCurrencyApiSQLite {
             System.out.println("Currency information added for player uuid: " + playerUuid);
         } catch (SQLException e) {
             System.err.println("Error inserting currency for player uuid: " + playerUuid + " - " + e.getMessage());
-        }
-    }
-
-    /**
-     * Updates a specific type of currency for a player.
-     * @param playerUuid the unique identifier for the player.
-     * @param operator the SQL operator to apply (+, -, etc.).
-     * @param coinType the type of currency to update (coin, copper, silver, or gold).
-     * @param amt the amount by which to update the currency.
-     * @throws IllegalArgumentException if the coinType is invalid.
-     */
-    public void updateCurrencyValue(String playerUuid, String operator, String coinType, double amt) {
-        // Validate coinType against allowed columns
-        if (!coinType.matches("coin|copper|silver|gold")) {
-            throw new IllegalArgumentException("Invalid coin type: " + coinType);
-        }
-
-        String query = "UPDATE currency SET " + coinType + " = " + coinType + " " + operator
-        + " ? WHERE player_uuid = ?";
-
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setDouble(1, amt);
-            pstmt.setString(2, playerUuid);
-            pstmt.executeUpdate();
-            System.out.println("Updated " + coinType + " for player uuid: " + playerUuid);
-        } catch (SQLException e) {
-            System.err.println("Error updating " + coinType + " for player uuid: " + playerUuid + " - " + e.getMessage());
         }
     }
 
@@ -246,5 +219,32 @@ public class MCEngineCurrencyApiSQLite {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * Updates a specific type of currency for a player.
+     * @param playerUuid the unique identifier for the player.
+     * @param operator the SQL operator to apply (+, -, etc.).
+     * @param coinType the type of currency to update (coin, copper, silver, or gold).
+     * @param amt the amount by which to update the currency.
+     * @throws IllegalArgumentException if the coinType is invalid.
+     */
+    public void updateCurrencyValue(String playerUuid, String operator, String coinType, double amt) {
+        // Validate coinType against allowed columns
+        if (!coinType.matches("coin|copper|silver|gold")) {
+            throw new IllegalArgumentException("Invalid coin type: " + coinType);
+        }
+
+        String query = "UPDATE currency SET " + coinType + " = " + coinType + " " + operator
+        + " ? WHERE player_uuid = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setDouble(1, amt);
+            pstmt.setString(2, playerUuid);
+            pstmt.executeUpdate();
+            System.out.println("Updated " + coinType + " for player uuid: " + playerUuid);
+        } catch (SQLException e) {
+            System.err.println("Error updating " + coinType + " for player uuid: " + playerUuid + " - " + e.getMessage());
+        }
     }
 }
