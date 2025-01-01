@@ -133,6 +133,7 @@ subprojects {
 
 dependencies {
     implementation project(path: ':mcengine-currency-api', configuration: 'shadow')
+    implementation project(path: ':common', configuration: 'shadow')
 
     // Dynamically include all server projects
     rootProject.subprojects.each { subproject ->
