@@ -1,5 +1,7 @@
 package io.github.mcengine.api.database;
 
+import java.sql.Connection;
+
 public interface MCEngineCurrencyApiDBInterface {
     void connect();
     void createTable();
