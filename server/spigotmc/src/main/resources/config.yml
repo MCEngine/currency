@@ -1,10 +1,11 @@
 database:
   # mysql, sqlite
   #mysql
-  type: mysql
+  type: sqlite
   host: localhost
   user: root
   password: ""
   port: 3306
+  name: minecraft
   # sqlite
   path: data.db
