@@ -7,5 +7,5 @@ api-version: 1.18
 depen: [MCEngine]
 commands:
   currency:
-    description: Gives a player a backpack.
-    usage: /currency <pay> <player> <amount> <currencyType>
+    description: Check, Pay coin
+    usage: /currency <check||pay> <currencyType||player> <amount> <currencyType>
