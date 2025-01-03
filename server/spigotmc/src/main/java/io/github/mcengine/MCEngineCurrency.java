@@ -1,6 +1,7 @@
 package io.github.mcengine;
 
 import io.github.mcengine.api.MCEngineCurrencyApi;
+import io.github.mcengine.common.currency.command.MCEngineCurrencyCommonCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MCEngineCurrency extends JavaPlugin {
@@ -48,6 +49,10 @@ public class MCEngineCurrency extends JavaPlugin {
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
         }
+
+        // Register the /currency command
+        getCommand("currency").setExecutor(new MCEngineCurrencyCommonCommand(currencyApi));
+        getLogger().info("MCEngineCurrency plugin enabled successfully.");
     }
 
     @Override
