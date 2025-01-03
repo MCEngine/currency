@@ -115,16 +115,21 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
                     senderPlayer.sendMessage(ChatColor.RED + "Usage: /currency pay <player> <amount> <currencyType>");
                     return true;
                 }
-
+            
                 if (!senderPlayer.hasPermission("mcengine.currency.pay")) {
                     senderPlayer.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
                     return true;
                 }
-
+            
                 String targetPlayerName = args[1];
                 String amountStr = args[2];
                 String currencyType = args[3].toLowerCase();
-
+            
+                if (!currencyType.matches("coin|copper|silver|gold")) {
+                    senderPlayer.sendMessage(ChatColor.RED + "Invalid currency type. Allowed types: coin, copper, silver, gold.");
+                    return true;
+                }
+            
                 double amount;
                 try {
                     amount = Double.parseDouble(amountStr);
@@ -132,34 +137,39 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
                     senderPlayer.sendMessage(ChatColor.RED + "The amount must be a valid number.");
                     return true;
                 }
-
+            
                 if (amount <= 0) {
                     senderPlayer.sendMessage(ChatColor.RED + "The amount must be greater than zero.");
                     return true;
                 }
-
+            
                 Player targetPlayer = Bukkit.getPlayerExact(targetPlayerName);
                 if (targetPlayer == null) {
                     senderPlayer.sendMessage(ChatColor.RED + "Player not found.");
                     return true;
                 }
-
+            
                 UUID senderUUID = senderPlayer.getUniqueId();
                 UUID targetUUID = targetPlayer.getUniqueId();
-
+            
                 double senderBalance = currencyApi.getCoin(senderUUID, currencyType);
                 if (senderBalance < amount) {
                     senderPlayer.sendMessage(ChatColor.RED + "You do not have enough " + currencyType + ".");
                     return true;
                 }
-
-                currencyApi.minusCoin(senderUUID, currencyType, amount);
-                currencyApi.addCoin(targetUUID, currencyType, amount);
-
-                currencyApi.createTransaction(senderUUID, targetUUID, currencyType, "pay", amount, "");
-
-                senderPlayer.sendMessage(ChatColor.GREEN + "You have sent " + amount + " " + currencyType + " to " + targetPlayer.getName() + ".");
-                targetPlayer.sendMessage(ChatColor.GREEN + "You have received " + amount + " " + currencyType + " from " + senderPlayer.getName() + ".");
+            
+                try {
+                    // Begin transaction
+                    currencyApi.minusCoin(senderUUID, currencyType, amount);
+                    currencyApi.addCoin(targetUUID, currencyType, amount);
+                    currencyApi.createTransaction(senderUUID, targetUUID, currencyType, "pay", amount, "");
+            
+                    senderPlayer.sendMessage(ChatColor.GREEN + "You have sent " + amount + " " + currencyType + " to " + targetPlayer.getName() + ".");
+                    targetPlayer.sendMessage(ChatColor.GREEN + "You have received " + amount + " " + currencyType + " from " + senderPlayer.getName() + ".");
+                } catch (Exception e) {
+                    senderPlayer.sendMessage(ChatColor.RED + "An error occurred during the transaction. Please try again later.");
+                    Bukkit.getLogger().warning("Transaction failed: " + e.getMessage());
+                }
                 return true;
             }
             default:
