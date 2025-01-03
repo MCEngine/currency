@@ -152,7 +152,12 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
             
                 UUID senderUUID = senderPlayer.getUniqueId();
                 UUID targetUUID = targetPlayer.getUniqueId();
-            
+
+                if (senderUUID.equals(targetUUID)) {
+                    senderPlayer.sendMessage(ChatColor.RED + "You cannot pay yourself.");
+                    return true;
+                }                
+
                 double senderBalance = currencyApi.getCoin(senderUUID, currencyType);
                 if (senderBalance < amount) {
                     senderPlayer.sendMessage(ChatColor.RED + "You do not have enough " + currencyType + ".");
