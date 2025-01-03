@@ -57,7 +57,7 @@ public class MCEngineCurrency extends JavaPlugin {
                 break;
 
             case "sqlite":
-                String dbFile = getConfig().getString("database.path", "plugins/MCEngineCurrency/data.db");
+                String dbFile = "plugins/MCEngineCurrency/" + getConfig().getString("database.path", "data.db");
                 sqlInfo = new String[]{dbFile};
                 currencyApi = new MCEngineCurrencyApi(sqlType, sqlInfo);
                 break;
