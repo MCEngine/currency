@@ -1,6 +1,7 @@
 package io.github.mcengine;
 
 import io.github.mcengine.api.MCEngineCurrencyApi;
+import io.github.mcengine.api.MCEngineApiUtil;
 import io.github.mcengine.common.currency.command.MCEngineCurrencyCommonCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -10,54 +11,60 @@ public class MCEngineCurrency extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
-
-        // Retrieve the database type from the config
-        String sqlType = getConfig().getString("database.type", "sqlite").toLowerCase();
-
-        String[] sqlInfo;
-
         try {
-            switch (sqlType) {
-                case "mysql":
-                    String dbHost = getConfig().getString("database.host", "localhost");
-                    String dbPort = getConfig().getString("database.port", "3306");
-                    String dbUser = getConfig().getString("database.user", "root");
-                    String dbPassword = getConfig().getString("database.password", "");
-                    String dbName = getConfig().getString("database.name", "minecraft"); // Default name for MySQL
-                    sqlInfo = new String[]{dbHost, dbPort, dbName, dbUser, dbPassword};
-                    currencyApi = new MCEngineCurrencyApi(sqlType, sqlInfo);
-                    break;
+            saveDefaultConfig();
+            MCEngineApiUtil.saveResourceIfNotExists(this, "data.db");
 
-                case "sqlite":
-                    String dbFile = getConfig().getString("database.path", "plugins/MCEngineCurrency/data.db");
-                    sqlInfo = new String[]{dbFile};
-                    currencyApi = new MCEngineCurrencyApi(sqlType, sqlInfo);
-                    break;
-
-                default:
-                    getLogger().severe("Invalid database type specified in config.yml. Supported types: mysql, sqlite");
-                    getServer().getPluginManager().disablePlugin(this);
-                    return;
-            }
+            // Retrieve the database type from the config
+            String sqlType = getConfig().getString("database.type", "sqlite").toLowerCase();
+            initializeCurrencyApi(sqlType);
 
             // Initialize the database
-            currencyApi.initDB();
-            getLogger().info("Database connection initialized successfully.");
+            if (currencyApi != null) {
+                currencyApi.initDB();
+                getLogger().info("Database connection initialized successfully.");
+            }
+
+            // Register the /currency command
+            if (getCommand("currency") != null) {
+                getCommand("currency").setExecutor(new MCEngineCurrencyCommonCommand(currencyApi));
+                getLogger().info("MCEngineCurrency plugin enabled successfully.");
+            } else {
+                throw new IllegalStateException("Command 'currency' is not registered in plugin.yml.");
+            }
         } catch (Exception e) {
-            getLogger().severe("Failed to initialize the database connection: " + e.getMessage());
+            getLogger().severe("Failed to enable the plugin: " + e.getMessage());
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
         }
+    }
 
-        // Register the /currency command
-        getCommand("currency").setExecutor(new MCEngineCurrencyCommonCommand(currencyApi));
-        getLogger().info("MCEngineCurrency plugin enabled successfully.");
+    private void initializeCurrencyApi(String sqlType) throws Exception {
+        String[] sqlInfo;
+        switch (sqlType) {
+            case "mysql":
+                String dbHost = getConfig().getString("database.host", "localhost");
+                String dbPort = getConfig().getString("database.port", "3306");
+                String dbUser = getConfig().getString("database.user", "root");
+                String dbPassword = getConfig().getString("database.password", "");
+                String dbName = getConfig().getString("database.name", "minecraft");
+                sqlInfo = new String[]{dbHost, dbPort, dbName, dbUser, dbPassword};
+                currencyApi = new MCEngineCurrencyApi(sqlType, sqlInfo);
+                break;
+
+            case "sqlite":
+                String dbFile = getConfig().getString("database.path", "plugins/MCEngineCurrency/data.db");
+                sqlInfo = new String[]{dbFile};
+                currencyApi = new MCEngineCurrencyApi(sqlType, sqlInfo);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Invalid database type specified in config.yml. Supported types: mysql, sqlite.");
+        }
     }
 
     @Override
     public void onDisable() {
-        // Disconnect from the database
         if (currencyApi != null) {
             try {
                 currencyApi.disConnect();
