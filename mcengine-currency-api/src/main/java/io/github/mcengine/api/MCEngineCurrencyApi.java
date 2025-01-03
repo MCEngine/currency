@@ -2,6 +2,8 @@ package io.github.mcengine.api;
 
 import java.util.UUID;
 
+import io.github.mcengine.api.currency.database.mysql.MCEngineCurrencyApiMySQL;
+import io.github.mcengine.api.currency.database.sqlite.MCEngineCurrencyApiSQLite;
 import io.github.mcengine.api.MCEngineApiUtil;
 
 public class MCEngineCurrencyApi {
