@@ -27,11 +27,6 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
 
         Player senderPlayer = (Player) sender;
 
-        if (args.length != 4) {
-            senderPlayer.sendMessage(ChatColor.RED + "Usage: /currency <check||pay> <currencyType||player> <amount> <currencyType>");
-            return true;
-        }
-
         String action = args[0].toLowerCase();
         String targetPlayerName = args[1];
         String amountStr = args[2];
@@ -57,6 +52,11 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
             case "pay": {
                 if (!senderPlayer.hasPermission("mcengine.currency.pay")) {
                     senderPlayer.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+                    return true;
+                }
+
+                if (args.length != 4) {
+                    senderPlayer.sendMessage(ChatColor.RED + "Usage: /currency pay <player> <amount> <currencyType>");
                     return true;
                 }
 
@@ -98,7 +98,7 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
                 return true;
             }
             default:
-                senderPlayer.sendMessage(ChatColor.RED + "Invalid action. Usage: /currency <pay> <player> <amount> <currencyType>");
+                senderPlayer.sendMessage(ChatColor.RED + "Invalid action. Usage: /currency <check||pay> <currencyType||player> <amount> <currencyType>");
                 return true;
         }
     }
