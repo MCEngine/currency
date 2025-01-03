@@ -14,12 +14,12 @@ public class MCEngineCurrencyApi {
         try {
             if (sqlType.equalsIgnoreCase("mysql")) {
                 tempInstance = MCEngineApiUtil.initialize(
-                        "io.github.mcengine.api.database.MCEngineCurrencyApiMySQL",
+                        "io.github.mcengine.api.currency.database.mysql.MCEngineCurrencyApiMySQL",
                         sqlInfo[0], sqlInfo[1], sqlInfo[2], sqlInfo[3], sqlInfo[4]
                 );
             } else if (sqlType.equalsIgnoreCase("sqlite")) {
                 tempInstance = MCEngineApiUtil.initialize(
-                        "io.github.mcengine.api.database.MCEngineCurrencyApiSQLite",
+                        "io.github.mcengine.api.currency.database.sqlite.MCEngineCurrencyApiSQLite",
                         sqlInfo[0]
                 );
             } else {
