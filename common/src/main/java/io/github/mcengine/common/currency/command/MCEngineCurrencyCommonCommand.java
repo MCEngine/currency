@@ -26,7 +26,16 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "Invalid command usage. Usage: /currency <check||pay> <currencyType||player> <amount> <currencyType>");
+            String[] messages = {
+                "Invalid command usage.",
+                "Usage:",
+                "/currency check <coinType>",
+                "/currency pay <player> <amount> <currencyType>"
+            };
+            
+            for (String message : messages) {
+                sender.sendMessage(ChatColor.RED + message);
+            }
             return true;
         }
 
