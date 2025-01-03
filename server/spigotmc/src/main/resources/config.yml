@@ -1,8 +1,10 @@
-db:
-  # mysql
+database:
+  # mysql, sqlite
+  #mysql
+  type: mysql
   host: localhost
   user: root
   password: ""
   port: 3306
   # sqlite
-  #path=path/to/file.db
+  path: data.db
