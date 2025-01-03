@@ -3,6 +3,7 @@ package io.github.mcengine;
 import io.github.mcengine.api.MCEngineCurrencyApi;
 import io.github.mcengine.api.MCEngineApiUtil;
 import io.github.mcengine.common.currency.command.MCEngineCurrencyCommonCommand;
+import io.github.mcengine.common.currency.listener.MCEngineCurrencyCommonListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MCEngineCurrency extends JavaPlugin {
@@ -26,7 +27,9 @@ public class MCEngineCurrency extends JavaPlugin {
                 getLogger().info("Database connection initialized successfully.");
             }
 
-            // Register the /currency command
+            // Register Listner
+            getServer().getPluginManager().registerEvents(new MCEngineCurrencyCommonListener(currencyApi),this);
+            // Register Command
             if (getCommand("currency") != null) {
                 getCommand("currency").setExecutor(new MCEngineCurrencyCommonCommand(currencyApi));
                 getLogger().info("MCEngineCurrency plugin enabled successfully.");
