@@ -63,13 +63,14 @@ public class MCEngineCurrencyApiSQLite {
             + "transaction_id INTEGER PRIMARY KEY AUTOINCREMENT, "
             + "player_uuid_sender CHAR(36) NOT NULL, "
             + "player_uuid_receiver CHAR(36) NOT NULL, "
-            + "currency_type ENUM('coin', 'copper', 'silver', 'gold') NOT NULL, "
-            + "transaction_type ENUM('pay', 'purchase') NOT NULL, "
+            + "currency_type TEXT CHECK(currency_type IN ('coin', 'copper', 'silver', 'gold')) NOT NULL, "
+            + "transaction_type TEXT CHECK(transaction_type IN ('pay', 'purchase')) NOT NULL, "
             + "amount DECIMAL(10,2) NOT NULL, "
             + "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
             + "notes VARCHAR(255), "
             + "FOREIGN KEY (player_uuid_sender) REFERENCES currency(player_uuid), "
             + "FOREIGN KEY (player_uuid_receiver) REFERENCES currency(player_uuid));";
+
 
         try (Statement stmt = connection.createStatement()) {
             // Execute the SQL to create the 'currency' table
