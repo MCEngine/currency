@@ -29,6 +29,7 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
             String[] messages = {
                 "Invalid command usage.",
                 "Usage:",
+                "/currency add <player> <amount>",
                 "/currency check <coinType>",
                 "/currency pay <player> <amount> <currencyType>"
             };
@@ -44,6 +45,48 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
         String action = args[0].toLowerCase();
 
         switch (action) {
+            case "add": {
+                if (args.length != 3) {
+                    sender.sendMessage(ChatColor.RED + "Usage: /currency add <player> <amount>");
+                    return true;
+                }
+            
+                if (!sender.hasPermission("mcengine.currency.add")) {
+                    sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+                    return true;
+                }
+            
+                String targetPlayerName = args[1];
+                String amountStr = args[2];
+            
+                double amount;
+                try {
+                    amount = Double.parseDouble(amountStr);
+                } catch (NumberFormatException e) {
+                    sender.sendMessage(ChatColor.RED + "The amount must be a valid number.");
+                    return true;
+                }
+            
+                if (amount <= 0) {
+                    sender.sendMessage(ChatColor.RED + "The amount must be greater than zero.");
+                    return true;
+                }
+            
+                Player targetPlayer = Bukkit.getPlayerExact(targetPlayerName);
+                if (targetPlayer == null) {
+                    sender.sendMessage(ChatColor.RED + "Player not found.");
+                    return true;
+                }
+            
+                UUID targetUUID = targetPlayer.getUniqueId();
+            
+                // Add coins to the player's account
+                currencyApi.addCoin(targetUUID, "coin", amount);
+            
+                sender.sendMessage(ChatColor.GREEN + "Added " + amount + " coins to " + targetPlayer.getName() + ".");
+                targetPlayer.sendMessage(ChatColor.GREEN + "You have been given " + amount + " coins by " + sender.getName() + ".");
+                return true;
+            }
             case "check": {
                 if (args.length != 2) {
                     senderPlayer.sendMessage(ChatColor.RED + "Usage: /currency check <coinType>");
