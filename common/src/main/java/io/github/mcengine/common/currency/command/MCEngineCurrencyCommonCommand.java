@@ -46,8 +46,8 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
 
         switch (action) {
             case "add": {
-                if (args.length != 3) {
-                    sender.sendMessage(ChatColor.RED + "Usage: /currency add <player> <amount>");
+                if (args.length != 4) {
+                    sender.sendMessage(ChatColor.RED + "Usage: /currency add <player> <coinType> <amount>");
                     return true;
                 }
             
@@ -57,7 +57,14 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
                 }
             
                 String targetPlayerName = args[1];
-                String amountStr = args[2];
+                String coinType = args[2].toLowerCase();
+                String amountStr = args[3];
+            
+                // Validate the coin type
+                if (!coinType.matches("coin|copper|silver|gold")) {
+                    sender.sendMessage(ChatColor.RED + "Invalid coin type: " + coinType + ". Valid types are: coin, copper, silver, gold.");
+                    return true;
+                }
             
                 double amount;
                 try {
@@ -81,10 +88,10 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
                 UUID targetUUID = targetPlayer.getUniqueId();
             
                 // Add coins to the player's account
-                currencyApi.addCoin(targetUUID, "coin", amount);
+                currencyApi.addCoin(targetUUID, coinType, amount);
             
-                sender.sendMessage(ChatColor.GREEN + "Added " + amount + " coins to " + targetPlayer.getName() + ".");
-                targetPlayer.sendMessage(ChatColor.GREEN + "You have been given " + amount + " coins by " + sender.getName() + ".");
+                sender.sendMessage(ChatColor.GREEN + "Added " + amount + " " + coinType + " to " + targetPlayer.getName() + ".");
+                targetPlayer.sendMessage(ChatColor.GREEN + "You have been given " + amount + " " + coinType + " by " + sender.getName() + ".");
                 return true;
             }
             case "check": {
