@@ -1,4 +1,4 @@
-package io.github.mcengine.api.database.mysql;
+package io.github.mcengine.api.currency.database.mysql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

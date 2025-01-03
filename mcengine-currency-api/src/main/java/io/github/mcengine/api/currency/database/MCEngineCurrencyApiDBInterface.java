@@ -1,4 +1,4 @@
-package io.github.mcengine.api.database;
+package io.github.mcengine.api.currency.database;
 
 import java.sql.Connection;
 
