@@ -111,8 +111,8 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
                 return true;
             }
             case "pay": {
-                if (args.length != 4) {
-                    senderPlayer.sendMessage(ChatColor.RED + "Usage: /currency pay <player> <amount> <currencyType>");
+                if (args.length != 5) {
+                    senderPlayer.sendMessage(ChatColor.RED + "Usage: /currency pay <player> <amount> <currencyType> <note>");
                     return true;
                 }
             
@@ -124,6 +124,7 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
                 String targetPlayerName = args[1];
                 String amountStr = args[2];
                 String currencyType = args[3].toLowerCase();
+                String note = args[4];
             
                 if (!currencyType.matches("coin|copper|silver|gold")) {
                     senderPlayer.sendMessage(ChatColor.RED + "Invalid currency type. Allowed types: coin, copper, silver, gold.");
@@ -162,10 +163,10 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
                     // Begin transaction
                     currencyApi.minusCoin(senderUUID, currencyType, amount);
                     currencyApi.addCoin(targetUUID, currencyType, amount);
-                    currencyApi.createTransaction(senderUUID, targetUUID, currencyType, "pay", amount, "");
+                    currencyApi.createTransaction(senderUUID, targetUUID, currencyType, "pay", amount, note);
             
-                    senderPlayer.sendMessage(ChatColor.GREEN + "You have sent " + amount + " " + currencyType + " to " + targetPlayer.getName() + ".");
-                    targetPlayer.sendMessage(ChatColor.GREEN + "You have received " + amount + " " + currencyType + " from " + senderPlayer.getName() + ".");
+                    senderPlayer.sendMessage(ChatColor.GREEN + "You have sent " + amount + " " + currencyType + " to " + targetPlayer.getName() + ". Note: " + note);
+                    targetPlayer.sendMessage(ChatColor.GREEN + "You have received " + amount + " " + currencyType + " from " + senderPlayer.getName() + ". Note: " + note);
                 } catch (Exception e) {
                     senderPlayer.sendMessage(ChatColor.RED + "An error occurred during the transaction. Please try again later.");
                     Bukkit.getLogger().warning("Transaction failed: " + e.getMessage());
