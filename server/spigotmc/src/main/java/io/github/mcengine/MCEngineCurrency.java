@@ -8,12 +8,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class MCEngineCurrency extends JavaPlugin {
 
     private MCEngineCurrencyApi currencyApi;
+    private final MCEngineApiUtil mcengineApiUtil = new MCEngineApiUtil();
 
     @Override
     public void onEnable() {
         try {
             saveDefaultConfig();
-            MCEngineApiUtil.saveResourceIfNotExists(this, "data.db");
+            mcengineApiUtil.saveResourceIfNotExists(this, "data.db");
 
             // Retrieve the database type from the config
             String sqlType = getConfig().getString("database.type", "sqlite").toLowerCase();
