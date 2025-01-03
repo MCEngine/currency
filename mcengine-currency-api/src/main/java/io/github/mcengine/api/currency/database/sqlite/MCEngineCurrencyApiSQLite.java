@@ -209,7 +209,7 @@ public class MCEngineCurrencyApiSQLite {
      * exception handling and logging in production code.</p>
      */
     public boolean playerExists(String uuid) {
-        String query = "SELECT COUNT(*) FROM currency WHERE uuid = ?";
+        String query = "SELECT COUNT(*) FROM currency WHERE player_uuid = ?"; // Corrected column name
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, uuid);
             ResultSet rs = stmt.executeQuery();
