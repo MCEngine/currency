@@ -6,6 +6,8 @@ import io.github.mcengine.common.currency.command.MCEngineCurrencyCommonCommand;
 import io.github.mcengine.common.currency.listener.MCEngineCurrencyCommonListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+
 public class MCEngineCurrency extends JavaPlugin {
 
     private MCEngineCurrencyApi currencyApi;
@@ -27,8 +29,9 @@ public class MCEngineCurrency extends JavaPlugin {
                 getLogger().info("Database connection initialized successfully.");
             }
 
-            // Register Listner
-            getServer().getPluginManager().registerEvents(new MCEngineCurrencyCommonListener(currencyApi),this);
+            // Register Listener
+            getServer().getPluginManager().registerEvents(new MCEngineCurrencyCommonListener(currencyApi), this);
+            
             // Register Command
             if (getCommand("currency") != null) {
                 getCommand("currency").setExecutor(new MCEngineCurrencyCommonCommand(currencyApi));
@@ -43,27 +46,39 @@ public class MCEngineCurrency extends JavaPlugin {
         }
     }
 
-    private void initializeCurrencyApi(String sqlType) throws Exception {
-        String[] sqlInfo;
-        switch (sqlType) {
-            case "mysql":
-                String dbHost = getConfig().getString("database.host", "localhost");
-                String dbPort = getConfig().getString("database.port", "3306");
-                String dbUser = getConfig().getString("database.user", "root");
-                String dbPassword = getConfig().getString("database.password", "");
-                String dbName = getConfig().getString("database.name", "minecraft");
-                sqlInfo = new String[]{dbHost, dbPort, dbName, dbUser, dbPassword};
-                currencyApi = new MCEngineCurrencyApi(sqlType, sqlInfo);
-                break;
+    private void initializeCurrencyApi(String sqlType) {
+        try {
+            switch (sqlType) {
+                case "mysql":
+                    String dbHost = getConfig().getString("database.host", "localhost");
+                    String dbPort = getConfig().getString("database.port", "3306");
+                    String dbUser = getConfig().getString("database.user", "root");
+                    String dbPassword = getConfig().getString("database.password", "");
+                    String dbName = getConfig().getString("database.name", "minecraft");
 
-            case "sqlite":
-                String dbFile = "plugins/MCEngineCurrency/" + getConfig().getString("database.path", "data.db");
-                sqlInfo = new String[]{dbFile};
-                currencyApi = new MCEngineCurrencyApi(sqlType, sqlInfo);
-                break;
-
-            default:
-                throw new IllegalArgumentException("Invalid database type specified in config.yml. Supported types: mysql, sqlite.");
+                    String[] sqlInfo = {dbHost, dbPort, dbName, dbUser, dbPassword};
+                    currencyApi = new MCEngineCurrencyApi(sqlType, sqlInfo);
+                    break;
+    
+                case "sqlite":
+                    // Ensure the plugin folder exists
+                    File pluginFolder = getDataFolder();
+                    if (!pluginFolder.exists()) {
+                        pluginFolder.mkdirs();
+                    }
+    
+                    // Set the SQLite database file path inside the plugin folder
+                    File dbFile = new File(pluginFolder, getConfig().getString("database.path", "data.db"));
+                    currencyApi = new MCEngineCurrencyApi(sqlType, new String[]{dbFile.getAbsolutePath()});
+                    break;
+    
+                default:
+                    throw new IllegalArgumentException("Invalid database type specified in config.yml. Supported types: mysql, sqlite.");
+            }
+            getLogger().info("Currency API initialized with " + sqlType);
+        } catch (Exception e) {
+            getLogger().severe("Error initializing Currency API: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
