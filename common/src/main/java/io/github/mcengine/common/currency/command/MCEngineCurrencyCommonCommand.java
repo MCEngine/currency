@@ -1,6 +1,6 @@
 package io.github.mcengine.common.currency.command;
 
-import io.github.mcengine.api.MCEngineCurrencyApi;
+import io.github.mcengine.api.currency.MCEngineCurrencyApi;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

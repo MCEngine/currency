@@ -1,6 +1,6 @@
 package io.github.mcengine.common.currency.listener;
 
-import io.github.mcengine.api.MCEngineCurrencyApi;
+import io.github.mcengine.api.currency.MCEngineCurrencyApi;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

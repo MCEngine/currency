@@ -1,4 +1,4 @@
-package io.github.mcengine.api;
+package io.github.mcengine.api.currency;
 
 import java.util.UUID;
 

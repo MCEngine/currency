@@ -1,6 +1,6 @@
-package io.github.mcengine;
+package io.github.mcengine.spigotmc.currency;
 
-import io.github.mcengine.api.MCEngineCurrencyApi;
+import io.github.mcengine.api.currency.MCEngineCurrencyApi;
 import io.github.mcengine.api.MCEngineApiUtil;
 import io.github.mcengine.common.currency.command.MCEngineCurrencyCommonCommand;
 import io.github.mcengine.common.currency.listener.MCEngineCurrencyCommonListener;
