@@ -3,6 +3,7 @@ plugins {
     id 'java'
 }
 
+// Set project version using a property, defaulting to 'unspecified' if not found
 version = project.findProperty("${project.name}-version") ?: 'unspecified'
 group = 'io.github.mcengine'
 
@@ -15,23 +16,27 @@ allprojects {
     repositories {
         mavenCentral()
         mavenLocal()
+        
+        // GitHub Packages repository for MCEngine dependencies
         maven {
             url = uri("https://maven.pkg.github.com/MCEngine/mcengine")
             credentials {
                 username = System.getenv("GIT_USER")
-                password = System.getenv('MCENGINE_GITHUB_TOKEN_PKG_PUBLISH_CURRENCY') ?: System.getenv('MCENGINE_GITHUB_TOKEN_PKG_PUBLISH')
+                password = System.getenv('MCENGINE_GITHUB_TOKEN_PKG_READ_MCENGINE') ?: 
+                          System.getenv('MCENGINE_GITHUB_TOKEN_PKG_READ') // Fallback token for all MCEngine packages
             }
         }
+
+        // SpigotMC repository for Bukkit and Spigot dependencies
         maven {
             url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots'
-
-            // As of Gradle 5.1, you can limit this to only those
-            // dependencies you expect from it
             content {
                 includeGroup 'org.bukkit'
                 includeGroup 'org.spigotmc'
             }
         }
+
+        // Additional Maven repositories
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url 'https://oss.sonatype.org/content/repositories/central' }
     }
@@ -40,11 +45,12 @@ allprojects {
 subprojects {
     apply plugin: 'java'
 
-    // Disable the 'jar' task if needed
+    // Disable default JAR task if necessary
     tasks.named('jar').configure {
         enabled = false
     }
 
+    // List of projects that should not build the shadow JAR
     def excludeBuildProjects = [':server']
     if (project.path in excludeBuildProjects) {
         tasks.matching { it.name == 'shadowJar' }.configureEach {
@@ -52,21 +58,23 @@ subprojects {
         }
     }
 
-    // Get submodules info, ensure version property is not null
+    // Ensure version property is assigned correctly
     version = project.findProperty("${project.name}-version") ?: 'unspecified'
 
-	shadowJar {
-		archiveClassifier = null
+    // Configure Shadow JAR plugin
+    shadowJar {
+        archiveClassifier = null
         destinationDirectory.set(file("${rootProject.buildDir}/libs"))
 
-        // Change the JAR name if path starts with 'server:{sub-projectName}'
+        // Set JAR name based on project path
         if (project.path.startsWith(':server') || project.name == 'common') {
             archiveBaseName.set("MCEngine-${project.name}")
         } else {
             archiveBaseName.set(project.name)
         }
-	}
+    }
 
+    // Dependencies for server-related projects
     if (project.path.startsWith(':server:')) {
         dependencies {
             implementation project(path: ':mcengine-currency-api', configuration: 'shadow')
@@ -74,7 +82,7 @@ subprojects {
         }
     }
 
-    // Bukkit server specific configuration
+    // SpigotMC-specific resource processing (for plugin.yml)
     if (project.name == 'spigotmc') {
         processResources {
             def props = [version: version]
@@ -86,6 +94,7 @@ subprojects {
         }
     }
 
+    // Publishing setup for mcengine-currency-api
     if (project.name == 'mcengine-currency-api') {
         apply plugin: 'maven-publish'
 
@@ -96,7 +105,8 @@ subprojects {
                     url = uri('https://maven.pkg.github.com/MCEngine/currency')
                     credentials {
                         username = System.getenv('GIT_USER')
-                        password = System.getenv('MCENGINE_GITHUB_TOKEN_PKG')
+                        password = System.getenv('MCENGINE_GITHUB_TOKEN_PKG_PUBLISH_CURRENCY') ?:
+                                  System.getenv('MCENGINE_GITHUB_TOKEN_PKG_PUBLISH')
                     }
                 }
             }
@@ -130,6 +140,7 @@ subprojects {
     }
 }
 
+// Root project dependencies
 dependencies {
     implementation project(path: ':mcengine-currency-api', configuration: 'shadow')
     implementation project(path: ':common', configuration: 'shadow')
@@ -143,15 +154,17 @@ dependencies {
     }
 }
 
+// Root shadow JAR configuration
 shadowJar {
     version = null
     archiveClassifier = null
     archiveBaseName.set('MCEngineCurrency')
 }
 
-// Disable the 'jar' task if needed
+// Disable default JAR task if necessary
 tasks.named('jar').configure {
     enabled = false
 }
 
+// Ensure build depends on shadow JAR
 build.dependsOn(shadowJar)
