@@ -16,7 +16,6 @@
             },
             "extensions": [
                 "ms-azuretools.vscode-docker",
-                "gitLab.gitlab-workflow",
                 "eamodio.gitlens",
                 "alefragnani.bookmarks",
                 "vscjava.vscode-java-pack"
