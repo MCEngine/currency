@@ -1,7 +1,7 @@
 database:
+  type: sqlite
   # mysql, sqlite
   #mysql
-  type: sqlite
   host: localhost
   user: root
   password: ""
