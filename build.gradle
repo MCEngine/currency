@@ -19,7 +19,7 @@ allprojects {
             url = uri("https://maven.pkg.github.com/MCEngine/mcengine")
             credentials {
                 username = System.getenv("GIT_USER")
-                password = System.getenv("MCENGINE_GITHUB_TOKEN_PKG")
+                password = System.getenv('MCENGINE_GITHUB_TOKEN_PKG_PUBLISH_CURRENCY') ?: System.getenv('MCENGINE_GITHUB_TOKEN_PKG_PUBLISH')
             }
         }
         maven {
