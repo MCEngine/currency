@@ -8,11 +8,20 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 
+/**
+ * The {@code MCEngineCurrency} class is a Spigot plugin for handling a currency system.
+ * It integrates with multiple database types (SQLite, MySQL) and provides API utilities
+ * for managing currency-related operations.
+ */
 public class MCEngineCurrency extends JavaPlugin {
 
     private MCEngineCurrencyApi currencyApi;
     private final MCEngineApiUtil mcengineApiUtil = new MCEngineApiUtil();
 
+    /**
+     * Called when the plugin is enabled. This method initializes the database connection,
+     * registers event listeners, and sets up command executors.
+     */
     @Override
     public void onEnable() {
         try {
@@ -46,6 +55,11 @@ public class MCEngineCurrency extends JavaPlugin {
         }
     }
 
+    /**
+     * Initializes the currency API based on the specified database type.
+     *
+     * @param sqlType The type of database to be used ("mysql" or "sqlite").
+     */
     private void initializeCurrencyApi(String sqlType) {
         try {
             switch (sqlType) {
@@ -82,6 +96,9 @@ public class MCEngineCurrency extends JavaPlugin {
         }
     }
 
+    /**
+     * Called when the plugin is disabled. Ensures that the database connection is closed properly.
+     */
     @Override
     public void onDisable() {
         if (currencyApi != null) {
