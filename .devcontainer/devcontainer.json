@@ -1,6 +1,8 @@
 {
     "name": "Java Gradle",
-    "image": "mcr.microsoft.com/devcontainers/java:21",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
     "features": {
         "ghcr.io/devcontainers/features/java:1": {
         "version": "none",
