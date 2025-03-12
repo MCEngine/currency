@@ -15,10 +15,7 @@
                 "workbench.colorTheme": "Default Dark Modern"
             },
             "extensions": [
-                "ms-azuretools.vscode-docker",
-                "eamodio.gitlens",
-                "alefragnani.bookmarks",
-                "vscjava.vscode-java-pack"
+                "MCEngine.mcengine-vscode-extension-pack"
             ]
         }
     }
