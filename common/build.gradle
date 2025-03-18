@@ -2,9 +2,7 @@ plugins {
     id 'java'
 }
 
-def spigotApiVersion = project.findProperty('spigotmc-api-version')
-
 dependencies {
     compileOnly project(":mcengine-currency-api")
-    compileOnly "org.spigotmc:spigot-api:${spigotApiVersion}"
+    compileOnly 'org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT'
 }

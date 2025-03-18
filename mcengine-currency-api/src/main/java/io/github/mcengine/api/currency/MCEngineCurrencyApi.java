@@ -1,8 +1,7 @@
 package io.github.mcengine.api.currency;
 
 import java.util.UUID;
-import io.github.mcengine.api.MCEngineApiUtil;
-
+import io.github.mcengine.api.mcengine.MCEngineApiUtil;
 /**
  * The MCEngineCurrencyApi class provides an interface for managing player currency transactions.
  * It supports multiple database implementations (MySQL, SQLite) and enables operations
