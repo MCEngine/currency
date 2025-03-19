@@ -5,11 +5,11 @@ updates:
     schedule:
       interval: "weekly"
     registries:
-      - github-maven
+      - github-mcengine-mcengine-maven
 
 registries:
   github-mcengine-mcengine-maven:
-    type: "maven-registry"
+    type: "maven-repository"
     url: "https://maven.pkg.github.com/MCEngine/mcengine"
     username: "x-access-token"
     password: "${{ secrets.MCENGINE_GITHUB_DEPENDABOT_TOKEN }}"
