@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.bukkit.plugin.Plugin;
 
 public class MCEngineCurrencyApiSQLite {
     private final String dbPath;
@@ -15,8 +16,8 @@ public class MCEngineCurrencyApiSQLite {
      * Constructor to initialize the SQLite API with a database path.
      * @param dbPath the path to the SQLite database file.
      */
-    public MCEngineCurrencyApiSQLite(String dbPath) {
-        this.dbPath = dbPath;
+    public MCEngineCurrencyApiSQLite(Plugin plugin) {
+        this.dbPath = getConfig().getString("sqlite.path", "currency.db");;
     }
 
     /**

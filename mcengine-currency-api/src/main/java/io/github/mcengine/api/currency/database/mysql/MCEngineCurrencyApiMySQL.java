@@ -6,33 +6,36 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.bukkit.plugin.Plugin;
 
 public class MCEngineCurrencyApiMySQL {
-    private final String dbHost, dbPort, dbName, dbUser, dbPassword;
+    private final String dbHost, dbPort, dbName, dbUser, dbPassword, dbSSL;
     private Connection connection;
 
     /**
      * Constructs an instance of MCEngineCurrencyApiMySQL.
      *
-     * @param dbHost     the database host address
-     * @param dbPort     the database port number
-     * @param dbName     the name of the database
-     * @param dbUser     the username for the database connection
-     * @param dbPassword the password for the database connection
+     * @param plugin     The main plugin instance, used to access configuration.
+     * @param dbHost     The database host address
+     * @param dbPort     The database port number
+     * @param dbName     The name of the database
+     * @param dbUser     The username for the database connection
+     * @param dbPassword The password for the database connection
      */
-    public MCEngineCurrencyApiMySQL(String dbHost, String dbPort, String dbName, String dbUser, String dbPassword) {
-        this.dbHost = dbHost;
-        this.dbPort = dbPort;
-        this.dbName = dbName;
-        this.dbUser = dbUser;
-        this.dbPassword = dbPassword;
+    public MCEngineCurrencyApiMySQL(Plugin plugin) {
+        this.dbHost = getConfig().getString("mysql.host", "localhost");
+        this.dbPort = getConfig().getString("mysql.port", "3306");
+        this.dbName = getConfig().getString("mysql.name", "minecraft");
+        this.dbUser = getConfig().getString("mysql.user", "root");
+        this.dbPassword = getConfig().getString("mysql.password", "");
+        this.dbSSL = getConfig().getString("mysql.ssl", "false");
     }
 
     /**
      * Establishes a connection to the MySQL database.
      */
     public void connect() {
-        String dbUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useSSL=false&serverTimezone=UTC";
+        String dbUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useSSL=" + dbSSL + "&serverTimezone=UTC";
         try {
             connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
             System.out.println("Connected to MySQL database");

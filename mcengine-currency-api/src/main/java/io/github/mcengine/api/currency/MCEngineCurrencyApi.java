@@ -1,6 +1,7 @@
 package io.github.mcengine.api.currency;
 
 import java.util.UUID;
+import org.bukkit.plugin.Plugin;
 import io.github.mcengine.api.mcengine.MCEngineApiUtil;
 /**
  * The MCEngineCurrencyApi class provides an interface for managing player currency transactions.
@@ -12,28 +13,23 @@ public class MCEngineCurrencyApi {
     private final Object databaseInstance;
 
     /**
-     * Constructs a new MCEngineCurrencyApi instance, initializing the database connection
-     * based on the provided SQL type.
+     * Constructs the currency API instance and initializes the appropriate database connection.
      *
-     * @param sqlType The type of SQL database ("mysql" or "sqlite").
-     * @param sqlInfo The database connection parameters:
-     *                - MySQL: {host, port, database, user, password}
-     *                - SQLite: {file path}
-     * @throws IllegalArgumentException If an unsupported SQL type is provided.
-     * @throws RuntimeException If there is an error initializing the database implementation.
+     * @param plugin  The Bukkit plugin instance.
+     * @param sqlType The type of SQL database to use ("mysql" or "sqlite").
      */
-    public MCEngineCurrencyApi(String sqlType, String[] sqlInfo) {
+    public MCEngineCurrencyApi(Plugin plugin, String sqlType) {
         Object tempInstance = null;
         try {
             if (sqlType.equalsIgnoreCase("mysql")) {
                 tempInstance = MCEngineApiUtil.initialize(
                         "io.github.mcengine.api.currency.database.mysql.MCEngineCurrencyApiMySQL",
-                        sqlInfo[0], sqlInfo[1], sqlInfo[2], sqlInfo[3], sqlInfo[4]
+                        plugin
                 );
             } else if (sqlType.equalsIgnoreCase("sqlite")) {
                 tempInstance = MCEngineApiUtil.initialize(
                         "io.github.mcengine.api.currency.database.sqlite.MCEngineCurrencyApiSQLite",
-                        sqlInfo[0]
+                        plugin
                 );
             } else {
                 throw new IllegalArgumentException("Unsupported SQL type: " + sqlType);
