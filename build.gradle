@@ -21,7 +21,7 @@ allprojects {
         maven {
             url = uri("https://maven.pkg.github.com/MCEngine/mcengine")
             credentials {
-                username = System.getenv("GIT_USER")
+                username = System.getenv("GIT_USERNAME")
                 password = System.getenv('MCENGINE_GITHUB_TOKEN_PKG_READ_MCENGINE') ?: 
                           System.getenv('MCENGINE_GITHUB_TOKEN_PKG_READ') // Fallback token for all MCEngine packages
             }
