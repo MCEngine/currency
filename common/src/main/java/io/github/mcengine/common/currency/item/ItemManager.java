@@ -15,7 +15,7 @@ import java.util.List;
 public class ItemManager {
 
     private static final NamespacedKey CASH_KEY = new NamespacedKey("mcengine", "cash");
-    private static final NamespacedKey COIN_TYPE_KEY = new NamespacedKey("mcengine", "coinType");
+    private static final NamespacedKey COIN_TYPE_KEY = new NamespacedKey("mcengine", "coin_type");
 
     public static ItemStack createCashItem(String coinType, double amount) {
         HeadDatabaseAPI hdb = new HeadDatabaseAPI();
