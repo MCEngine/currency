@@ -57,13 +57,6 @@ subprojects {
     shadowJar {
         archiveClassifier = null
         destinationDirectory.set(file("${rootProject.buildDir}/libs"))
-
-        // Set JAR name based on project path
-        if (project.path.startsWith(':server') || project.name == 'common') {
-            archiveBaseName.set("MCEngine-${project.name}")
-        } else {
-            archiveBaseName.set(project.name)
-        }
     }
 
     // Dependencies for server-related projects
