@@ -1,7 +1,6 @@
 package io.github.mcengine.spigotmc.currency;
 
 import io.github.mcengine.api.currency.MCEngineCurrencyApi;
-import io.github.mcengine.api.mcengine.MCEngineApiUtil;
 import io.github.mcengine.common.currency.command.MCEngineCurrencyCommonCommand;
 import io.github.mcengine.common.currency.listener.MCEngineCurrencyCommonListener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,88 +15,55 @@ import java.io.File;
 public class MCEngineCurrency extends JavaPlugin {
 
     private MCEngineCurrencyApi currencyApi;
-    private final MCEngineApiUtil mcengineApiUtil = new MCEngineApiUtil();
 
     /**
-     * Called when the plugin is enabled. This method initializes the database connection,
-     * registers event listeners, and sets up command executors.
+     * Called when the plugin is enabled.
+     * 
+     * <p>This method performs the following actions:</p>
+     * <ul>
+     *   <li>Saves the default configuration file if it doesn't already exist.</li>
+     *   <li>Retrieves the SQL type from the configuration, defaulting to "sqlite" if not set.</li>
+     *   <li>Initializes the {@code MCEngineCurrencyApi} with the selected SQL type.</li>
+     *   <li>Initializes the database connection.</li>
+     *   <li>Registers event listeners and command executors for currency handling.</li>
+     *   <li>Logs the successful enable message or disables the plugin if an exception occurs.</li>
+     * </ul>
      */
     @Override
     public void onEnable() {
+        // Save default config if not already present
+        saveDefaultConfig();
+
+        // Read SQL type from config (default to sqlite)
+        String sqlType = getConfig().getString("sql-type", "sqlite");
+
         try {
-            saveDefaultConfig();
-            mcengineApiUtil.saveResourceIfNotExists(this, "data.db");
+            // Initialize currency API
+            currencyApi = new MCEngineCurrencyApi(this, sqlType);
+            currencyApi.initDB();
 
-            // Retrieve the database type from the config
-            String sqlType = getConfig().getString("database.type", "sqlite").toLowerCase();
-            initializeCurrencyApi(sqlType);
+            // Register listener and command using the shared API
+            getServer().getPluginManager().registerEvents(
+                new MCEngineCurrencyCommonListener(currencyApi), this
+            );
+            getCommand("currency").setExecutor(
+                new MCEngineCurrencyCommonCommand(currencyApi)
+            );
 
-            // Initialize the database
-            if (currencyApi != null) {
-                currencyApi.initDB();
-                getLogger().info("Database connection initialized successfully.");
-            }
-
-            // Register Listener
-            getServer().getPluginManager().registerEvents(new MCEngineCurrencyCommonListener(currencyApi), this);
-            
-            // Register Command
-            if (getCommand("currency") != null) {
-                getCommand("currency").setExecutor(new MCEngineCurrencyCommonCommand(currencyApi));
-                getLogger().info("MCEngineCurrency plugin enabled successfully.");
-            } else {
-                throw new IllegalStateException("Command 'currency' is not registered in plugin.yml.");
-            }
+            getLogger().info("MCEngineCurrency has been enabled using SQL type: " + sqlType);
         } catch (Exception e) {
-            getLogger().severe("Failed to enable the plugin: " + e.getMessage());
+            getLogger().severe("Failed to initialize MCEngineCurrency: " + e.getMessage());
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
         }
     }
 
     /**
-     * Initializes the currency API based on the specified database type.
-     *
-     * @param sqlType The type of database to be used ("mysql" or "sqlite").
-     */
-    private void initializeCurrencyApi(String sqlType) {
-        try {
-            switch (sqlType) {
-                case "mysql":
-                    String dbHost = getConfig().getString("database.host", "localhost");
-                    String dbPort = getConfig().getString("database.port", "3306");
-                    String dbUser = getConfig().getString("database.user", "root");
-                    String dbPassword = getConfig().getString("database.password", "");
-                    String dbName = getConfig().getString("database.name", "minecraft");
-
-                    String[] sqlInfo = {dbHost, dbPort, dbName, dbUser, dbPassword};
-                    currencyApi = new MCEngineCurrencyApi(sqlType, sqlInfo);
-                    break;
-    
-                case "sqlite":
-                    // Ensure the plugin folder exists
-                    File pluginFolder = getDataFolder();
-                    if (!pluginFolder.exists()) {
-                        pluginFolder.mkdirs();
-                    }
-    
-                    // Set the SQLite database file path inside the plugin folder
-                    File dbFile = new File(pluginFolder, getConfig().getString("database.path", "data.db"));
-                    currencyApi = new MCEngineCurrencyApi(sqlType, new String[]{dbFile.getAbsolutePath()});
-                    break;
-    
-                default:
-                    throw new IllegalArgumentException("Invalid database type specified in config.yml. Supported types: mysql, sqlite.");
-            }
-            getLogger().info("Currency API initialized with " + sqlType);
-        } catch (Exception e) {
-            getLogger().severe("Error initializing Currency API: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Called when the plugin is disabled. Ensures that the database connection is closed properly.
+     * Called when the plugin is disabled.
+     * 
+     * <p>This method safely disconnects from the database by calling {@code disConnect()}
+     * on the {@code currencyApi}. It logs the result of the disconnection process
+     * and catches any exceptions that may occur.</p>
      */
     @Override
     public void onDisable() {
