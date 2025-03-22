@@ -27,6 +27,7 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
      * @param currencyApi The currency API instance for handling transactions.
      */
     public MCEngineCurrencyCommonCommand(Plugin plugin, MCEngineCurrencyApi currencyApi) {
+        this.plugin = plugin;
         this.currencyApi = currencyApi;
     }
 
