@@ -34,10 +34,10 @@ public class ItemManager {
 
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(ChatColor.YELLOW + "Cash: " + coinType);
+            meta.setDisplayName(ChatColor.YELLOW + "Cash: " + capitalize(coinType));
 
             List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GRAY + "coin type : " + ChatColor.WHITE + coinType);
+            lore.add(ChatColor.GRAY + "coin type : " + ChatColor.WHITE + capitalize(coinType));
             lore.add(ChatColor.GRAY + "amount : " + ChatColor.WHITE + amount);
             meta.setLore(lore);
 
@@ -51,4 +51,9 @@ public class ItemManager {
 
         return item;
     }
+
+    private static String capitalize(String str) {
+        if (str == null || str.isEmpty()) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+    }    
 }
