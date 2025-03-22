@@ -1,12 +1,14 @@
 package io.github.mcengine.common.currency.command;
 
 import io.github.mcengine.api.currency.MCEngineCurrencyApi;
+import io.github.mcengine.common.currency.item.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
@@ -49,6 +51,7 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
 
         switch (args[0].toLowerCase()) {
             case "add" -> handleAddCommand(sender, args);
+            case "cash" -> handleCashCommand(player, args);
             case "check" -> handleCheckCommand(player, args);
             case "pay" -> handlePayCommand(player, args);
             default -> sender.sendMessage(ChatColor.RED + "Invalid action. Usage: /currency <check||pay> <currencyType||player> <amount> <currencyType>");
@@ -114,6 +117,47 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
 
         sender.sendMessage(ChatColor.GREEN + "Added " + amount + " " + coinType + " to " + targetPlayer.getName() + ".");
         targetPlayer.sendMessage(ChatColor.GREEN + "You have been given " + amount + " " + coinType + " by " + sender.getName() + ".");
+        return true;
+    }
+
+    private boolean handleCashCommand(Player player, String[] args) {
+        if (args.length != 3) {
+            player.sendMessage(ChatColor.RED + "Usage: /currency cash <coinType> <amount>");
+            return true;
+        }
+    
+        String coinType = args[1].toLowerCase();
+        if (!coinType.matches("coin|copper|silver|gold")) {
+            player.sendMessage(ChatColor.RED + "Invalid coin type. Use: coin, copper, silver, gold.");
+            return true;
+        }
+    
+        double amount;
+        try {
+            amount = Double.parseDouble(args[2]);
+        } catch (NumberFormatException e) {
+            player.sendMessage(ChatColor.RED + "Amount must be a number.");
+            return true;
+        }
+    
+        if (amount <= 0) {
+            player.sendMessage(ChatColor.RED + "Amount must be greater than zero.");
+            return true;
+        }
+    
+        double balance = currencyApi.getCoin(player.getUniqueId(), coinType);
+        if (balance < amount) {
+            player.sendMessage(ChatColor.RED + "You do not have enough " + coinType + ".");
+            return true;
+        }
+    
+        // Deduct the currency
+        currencyApi.minusCoin(player.getUniqueId(), coinType, amount);
+    
+        // Create the item and give it
+        ItemStack cashItem = ItemManager.createCashItem(coinType, amount);
+        player.getInventory().addItem(cashItem);
+        player.sendMessage(ChatColor.GREEN + "You converted " + amount + " " + coinType + " into a cash item.");
         return true;
     }
 
