@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import io.github.mcengine.api.currency.database.MCEngineCurrencyApiDBInterface;
 import org.bukkit.plugin.Plugin;
 
 public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface {
