@@ -50,7 +50,7 @@ public class MCEngineCurrency extends JavaPlugin {
                 new MCEngineCurrencyCommonCommand(currencyApi)
             );
 
-            getLogger().info("MCEngineCurrency has been enabled using SQL type: " + sqlType);
+            getLogger().info("has been enabled using SQL type: " + sqlType);
         } catch (Exception e) {
             getLogger().severe("Failed to initialize MCEngineCurrency: " + e.getMessage());
             e.printStackTrace();
