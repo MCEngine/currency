@@ -13,6 +13,7 @@ import org.bukkit.plugin.Plugin;
  * and recording transactions.
  */
 public class MCEngineCurrencyApi {
+    private Plugin plugin;
     private MCEngineCurrencyApiDBInterface db;
 
     /**
@@ -22,15 +23,16 @@ public class MCEngineCurrencyApi {
      * @param sqlType The type of SQL database to use ("mysql" or "sqlite").
      */
     public MCEngineCurrencyApi(Plugin plugin, String sqlType) {
+        this.plugin = plugin;
         switch (sqlType.toLowerCase()) {
             case "mysql":
-            this.db = new MCEngineCurrencyApiMySQL(plugin);
-            break;
-        case "sqlite":
-            this.db = new MCEngineCurrencyApiSQLite(plugin);
-            break;
+                this.db = new MCEngineCurrencyApiMySQL(plugin);
+                break;
+            case "sqlite":
+                this.db = new MCEngineCurrencyApiSQLite(plugin);
+                break;
             default:
-                throw new IllegalArgumentException("Unsupported SQL type: " + sqlType);
+                plugin.getLogger().severe("Unsupported SQL type: " + sqlType);
         }
     }
 
@@ -73,7 +75,8 @@ public class MCEngineCurrencyApi {
         if (result instanceof Boolean) {
             return (Boolean) result;
         } else {
-            throw new RuntimeException("Error checking if player exists in the database.");
+            plugin.getLogger().severe("Error checking if player exists in the database.");
+            return false;
         }
     }
 
@@ -109,14 +112,15 @@ public class MCEngineCurrencyApi {
      */
     public double getCoin(UUID uuid, String coinType) {
         if (!coinType.matches("coin|copper|silver|gold")) {
-            throw new IllegalArgumentException("Invalid coin type: " + coinType);
+            plugin.getLogger().severe("Invalid coin type: " + coinType);
         }
     
         Object result = db.getCoin(uuid.toString(), coinType);
         if (result instanceof Double) {
             return (Double) result;
         } else {
-            throw new RuntimeException("Error retrieving coin balance from the database.");
+            plugin.getLogger().severe("Error retrieving coin balance from the database.");
+            return 0.0;
         }
     }
 
