@@ -35,7 +35,7 @@ public class MCEngineCurrency extends JavaPlugin {
         saveDefaultConfig();
 
         // Read SQL type from config (default to sqlite)
-        String sqlType = getConfig().getString("sql-type", "sqlite");
+        String sqlType = getConfig().getString("database.type", "sqlite");
 
         try {
             // Initialize currency API
