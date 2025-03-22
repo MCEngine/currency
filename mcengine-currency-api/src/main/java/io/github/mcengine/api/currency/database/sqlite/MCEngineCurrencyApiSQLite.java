@@ -9,15 +9,17 @@ import java.sql.Statement;
 import org.bukkit.plugin.Plugin;
 
 public class MCEngineCurrencyApiSQLite {
+    private final Plugin plugin;
     private final String dbPath;
     private Connection connection;
 
     /**
      * Constructor to initialize the SQLite API with a database path.
-     * @param dbPath the path to the SQLite database file.
+     * @param plugin the plugin instance
      */
     public MCEngineCurrencyApiSQLite(Plugin plugin) {
-        this.dbPath = getConfig().getString("sqlite.path", "currency.db");;
+        this.plugin = plugin;
+        this.dbPath = plugin.getConfig().getString("sqlite.path", "currency.db");
     }
 
     /**
@@ -25,10 +27,11 @@ public class MCEngineCurrencyApiSQLite {
      */
     public void connect() {
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-            System.out.println("Connected to SQLite database.");
+            String fullPath = plugin.getDataFolder().getAbsolutePath() + "/" + dbPath;
+            connection = DriverManager.getConnection("jdbc:sqlite:" + fullPath);
+            plugin.getLogger().info("Connected to SQLite database at: " + fullPath);
         } catch (SQLException e) {
-            System.err.println("Failed to connect to SQLite database: " + e.getMessage());
+            plugin.getLogger().severe("Failed to connect to SQLite database: " + e.getMessage());
         }
     }
 

@@ -23,12 +23,12 @@ public class MCEngineCurrencyApiMySQL {
      * @param dbPassword The password for the database connection
      */
     public MCEngineCurrencyApiMySQL(Plugin plugin) {
-        this.dbHost = getConfig().getString("mysql.host", "localhost");
-        this.dbPort = getConfig().getString("mysql.port", "3306");
-        this.dbName = getConfig().getString("mysql.name", "minecraft");
-        this.dbUser = getConfig().getString("mysql.user", "root");
-        this.dbPassword = getConfig().getString("mysql.password", "");
-        this.dbSSL = getConfig().getString("mysql.ssl", "false");
+        this.dbHost = plugin.getConfig().getString("mysql.host", "localhost");
+        this.dbPort = plugin.getConfig().getString("mysql.port", "3306");
+        this.dbName = plugin.getConfig().getString("mysql.name", "minecraft");
+        this.dbUser = plugin.getConfig().getString("mysql.user", "root");
+        this.dbPassword = plugin.getConfig().getString("mysql.password", "");
+        this.dbSSL = plugin.getConfig().getString("mysql.ssl", "false");
     }
 
     /**
