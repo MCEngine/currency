@@ -20,7 +20,7 @@ public class MCEngineCurrencyApiSQLite implements MCEngineCurrencyApiDBInterface
      */
     public MCEngineCurrencyApiSQLite(Plugin plugin) {
         this.plugin = plugin;
-        this.dbPath = plugin.getConfig().getString("sqlite.path", "currency.db");
+        this.dbPath = plugin.getConfig().getString("database.sqlite.path", "currency.db");
         connect();
     }
 
