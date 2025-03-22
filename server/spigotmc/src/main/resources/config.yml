@@ -11,3 +11,7 @@ database:
 
   sqlite:
     path: currency.db
+
+hook:
+  HeadDB:
+    enable: false
