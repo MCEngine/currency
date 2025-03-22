@@ -37,40 +37,30 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(ChatColor.RED + "Only players can use this command.");
             return true;
         }
 
         if (args.length == 0) {
-            String[] messages = {
-                "Invalid command usage.",
-                "Usage:",
-                "/currency add <player> <amount>",
-                "/currency check <coinType>",
-                "/currency pay <player> <amount> <currencyType>"
-            };
-            
-            for (String message : messages) {
-                sender.sendMessage(ChatColor.RED + message);
-            }
+            sendUsageMessage(sender);
             return true;
         }
 
-        Player senderPlayer = (Player) sender;
-        String action = args[0].toLowerCase();
-
-        switch (action) {
-            case "add":
-                return handleAddCommand(sender, args);
-            case "check":
-                return handleCheckCommand(senderPlayer, args);
-            case "pay":
-                return handlePayCommand(senderPlayer, args);
-            default:
-                senderPlayer.sendMessage(ChatColor.RED + "Invalid action. Usage: /currency <check||pay> <currencyType||player> <amount> <currencyType>");
-                return true;
+        switch (args[0].toLowerCase()) {
+            case "add" -> handleAddCommand(sender, args);
+            case "check" -> handleCheckCommand(player, args);
+            case "pay" -> handlePayCommand(player, args);
+            default -> sender.sendMessage(ChatColor.RED + "Invalid action. Usage: /currency <check||pay> <currencyType||player> <amount> <currencyType>");
         }
+        return true;
+    }
+
+    private void sendUsageMessage(CommandSender sender) {
+        sender.sendMessage(ChatColor.RED + "Invalid command usage.\nUsage:");
+        sender.sendMessage(ChatColor.RED + "/currency add <player> <coinType> <amount>");
+        sender.sendMessage(ChatColor.RED + "/currency check <coinType>");
+        sender.sendMessage(ChatColor.RED + "/currency pay <player> <amount> <currencyType> <note>");
     }
 
     /**
