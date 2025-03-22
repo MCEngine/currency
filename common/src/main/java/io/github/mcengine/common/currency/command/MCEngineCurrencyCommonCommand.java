@@ -65,6 +65,7 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
     private void sendUsageMessage(CommandSender sender) {
         sender.sendMessage(ChatColor.RED + "Invalid command usage.\nUsage:");
         sender.sendMessage(ChatColor.RED + "/currency add <player> <coinType> <amount>");
+        sender.sendMessage(ChatColor.RED + "/currency cash <coinType> <amount>");
         sender.sendMessage(ChatColor.RED + "/currency check <coinType>");
         sender.sendMessage(ChatColor.RED + "/currency pay <player> <amount> <currencyType> <note>");
     }
