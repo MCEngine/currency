@@ -28,7 +28,7 @@ public class MCEngineCurrencyCommonListenerHookHeadDB implements Listener {
     /**
      * Namespaced key for identifying the coin type stored in the item.
      */
-    private static final NamespacedKey COIN_TYPE_KEY = new NamespacedKey("mcengine", "coinType");
+    private static final NamespacedKey COIN_TYPE_KEY = new NamespacedKey("mcengine", "coin_type");
 
     /**
      * Namespaced key for identifying the amount of currency stored in the item.
