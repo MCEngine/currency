@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import org.bukkit.plugin.Plugin;
 
-public class MCEngineCurrencyApiSQLite {
+public class MCEngineCurrencyApiSQLite implements MCEngineCurrencyApiDBInterface {
     private final Plugin plugin;
     private final String dbPath;
     private Connection connection;
