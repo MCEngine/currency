@@ -10,6 +10,7 @@ import io.github.mcengine.api.currency.database.MCEngineCurrencyApiDBInterface;
 import org.bukkit.plugin.Plugin;
 
 public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface {
+    private final Plugin plugin;
     private final String dbHost, dbPort, dbName, dbUser, dbPassword, dbSSL;
     private Connection connection;
 
@@ -24,6 +25,7 @@ public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface 
      * @param dbPassword The password for the database connection
      */
     public MCEngineCurrencyApiMySQL(Plugin plugin) {
+        this.plugin = plugin;
         this.dbHost = plugin.getConfig().getString("database.mysql.host", "localhost");
         this.dbPort = plugin.getConfig().getString("database.mysql.port", "3306");
         this.dbName = plugin.getConfig().getString("database.mysql.name", "minecraft");
@@ -40,9 +42,9 @@ public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface 
         String dbUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useSSL=" + dbSSL + "&serverTimezone=UTC";
         try {
             this.connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-            System.out.println("Connected to MySQL database");
+            plugin.getLogger().info("Connected to MySQL database");
         } catch (SQLException e) {
-            System.err.println("Failed to connect to MySQL database: " + e.getMessage());
+            plugin.getLogger().severe("Failed to connect to MySQL database: " + e.getMessage());
         }
     }
 
@@ -89,13 +91,13 @@ public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface 
         try (Statement stmt = connection.createStatement()) {
             // Execute the SQL to create the 'currency' table
             stmt.executeUpdate(createCurrencyTableSQL);
-            System.out.println("Table 'currency' created successfully in MySQL database.");
+            plugin.getLogger().info("Table 'currency' created successfully in MySQL database.");
 
             // Execute the SQL to create the 'currency_transaction' table
             stmt.executeUpdate(createTransactionTableSQL);
-            System.out.println("Table 'currency_transaction' created successfully in MySQL database.");
+            plugin.getLogger().info("Table 'currency_transaction' created successfully in MySQL database.");
         } catch (SQLException e) {
-            System.err.println("Error creating tables: " + e.getMessage());
+            plugin.getLogger().severe("Error creating tables: " + e.getMessage());
         }
     }
 
@@ -106,10 +108,10 @@ public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface 
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-                System.out.println("Disconnected from MySQL database.");
+                plugin.getLogger().info("Disconnected from MySQL database.");
             }
         } catch (SQLException e) {
-            System.err.println("Error while disconnecting from MySQL database: " + e.getMessage());
+            plugin.getLogger().severe("Error while disconnecting from MySQL database: " + e.getMessage());
         }
     }
 
@@ -134,7 +136,7 @@ public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface 
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error retrieving " + coinType + " for player uuid: " + playerUuid + " - " + e.getMessage());
+            plugin.getLogger().severe("Error retrieving " + coinType + " for player uuid: " + playerUuid + " - " + e.getMessage());
         }
         return 0.0; // Default value if no record is found
     }
@@ -166,9 +168,9 @@ public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface 
             pstmt.setDouble(4, silver);
             pstmt.setDouble(5, gold);
             pstmt.executeUpdate();
-            System.out.println("Currency information added for player uuid: " + playerUuid);
+            plugin.getLogger().info("Currency information added for player uuid: " + playerUuid);
         } catch (SQLException e) {
-            System.err.println("Error inserting currency for player uuid: " + playerUuid + " - " + e.getMessage());
+            plugin.getLogger().severe("Error inserting currency for player uuid: " + playerUuid + " - " + e.getMessage());
         }
     }
 
@@ -187,10 +189,10 @@ public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface 
 
         // Validate currencyType and transactionType
         if (!currencyType.matches("coin|copper|silver|gold")) {
-            throw new IllegalArgumentException("Invalid currency type: " + currencyType);
+            plugin.getLogger().severe("Invalid currency type: " + currencyType);
         }
         if (!transactionType.matches("pay|purchase")) {
-            throw new IllegalArgumentException("Invalid transaction type: " + transactionType);
+            plugin.getLogger().severe("Invalid transaction type: " + transactionType);
         }
 
         String query = "INSERT INTO currency_transaction (player_uuid_sender, player_uuid_receiver, currency_type, "
@@ -205,10 +207,10 @@ public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface 
             pstmt.setString(6, notes);
 
             pstmt.executeUpdate();
-            System.out.println("Transaction successfully recorded between " 
+            plugin.getLogger().info("Transaction successfully recorded between " 
             + playerUuidSender + " and " + playerUuidReceiver);
         } catch (SQLException e) {
-            System.err.println("Error inserting transaction: " + e.getMessage());
+            plugin.getLogger().severe("Error inserting transaction: " + e.getMessage());
         }
     }
 
@@ -250,7 +252,7 @@ public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface 
     public void updateCurrencyValue(String playerUuid, String operator, String coinType, double amt) {
         // Validate coinType against allowed columns
         if (!coinType.matches("coin|copper|silver|gold")) {
-            throw new IllegalArgumentException("Invalid coin type: " + coinType);
+            plugin.getLogger().severe("Invalid coin type: " + coinType);
         }
 
         String query = "UPDATE currency SET " + coinType + " = " + coinType + " " + operator
@@ -260,9 +262,9 @@ public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface 
             pstmt.setDouble(1, amt);
             pstmt.setString(2, playerUuid);
             pstmt.executeUpdate();
-            System.out.println("Updated " + coinType + " for player uuid: " + playerUuid);
+            plugin.getLogger().info("Updated " + coinType + " for player uuid: " + playerUuid);
         } catch (SQLException e) {
-            System.err.println("Error updating " + coinType + " for player uuid: " + playerUuid + " - " + e.getMessage());
+            plugin.getLogger().severe("Error updating " + coinType + " for player uuid: " + playerUuid + " - " + e.getMessage());
         }
     }
 }
