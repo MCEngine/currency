@@ -49,7 +49,7 @@ public class MCEngineCurrency extends JavaPlugin {
                 new MCEngineCurrencyCommonListener(currencyApi), this
             );
             getCommand("currency").setExecutor(
-                new MCEngineCurrencyCommonCommand(currencyApi)
+                new MCEngineCurrencyCommonCommand(this, currencyApi)
             );
             if (hookHeadDB) {
                 // Pass currencyApi to the hook listener instead of "this"

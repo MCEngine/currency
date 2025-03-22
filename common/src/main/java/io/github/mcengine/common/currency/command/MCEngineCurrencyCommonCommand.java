@@ -9,6 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ import java.util.UUID;
  */
 public class MCEngineCurrencyCommonCommand implements CommandExecutor {
 
+    private Plugin plugin;
     private final MCEngineCurrencyApi currencyApi;
 
     /**
@@ -24,7 +26,7 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
      *
      * @param currencyApi The currency API instance for handling transactions.
      */
-    public MCEngineCurrencyCommonCommand(MCEngineCurrencyApi currencyApi) {
+    public MCEngineCurrencyCommonCommand(Plugin plugin, MCEngineCurrencyApi currencyApi) {
         this.currencyApi = currencyApi;
     }
 
@@ -120,18 +122,33 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
         return true;
     }
 
+    /**
+     * Handles the "/currency cash" command, allowing the player to convert a specified amount
+     * of in-game currency into a physical cash item using HeadDB, if enabled.
+     *
+     * @param player the player who issued the command
+     * @param args the command arguments (expected format: /currency cash <coinType> <amount>)
+     * @return true if the command was handled successfully, false otherwise
+     */
     private boolean handleCashCommand(Player player, String[] args) {
+        boolean hookHeadDB = plugin.getConfig().getBoolean("hook.HeadDB.enable", false);
+
+        if (!hookHeadDB) {
+            player.sendMessage(ChatColor.RED + "This function isn't supported.");
+            return true;
+        }
+
         if (args.length != 3) {
             player.sendMessage(ChatColor.RED + "Usage: /currency cash <coinType> <amount>");
             return true;
         }
-    
+
         String coinType = args[1].toLowerCase();
         if (!coinType.matches("coin|copper|silver|gold")) {
             player.sendMessage(ChatColor.RED + "Invalid coin type. Use: coin, copper, silver, gold.");
             return true;
         }
-    
+
         double amount;
         try {
             amount = Double.parseDouble(args[2]);
@@ -139,24 +156,25 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
             player.sendMessage(ChatColor.RED + "Amount must be a number.");
             return true;
         }
-    
+
         if (amount <= 0) {
             player.sendMessage(ChatColor.RED + "Amount must be greater than zero.");
             return true;
         }
-    
+
         double balance = currencyApi.getCoin(player.getUniqueId(), coinType);
         if (balance < amount) {
             player.sendMessage(ChatColor.RED + "You do not have enough " + coinType + ".");
             return true;
         }
-    
+
         // Deduct the currency
         currencyApi.minusCoin(player.getUniqueId(), coinType, amount);
-    
-        // Create the item and give it
+
+        // Create the cash item and give it to the player
         ItemStack cashItem = ItemManager.createCashItem(coinType, amount);
         player.getInventory().addItem(cashItem);
+
         player.sendMessage(ChatColor.GREEN + "You converted " + amount + " " + coinType + " into a cash item.");
         return true;
     }
