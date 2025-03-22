@@ -2,6 +2,7 @@ package io.github.mcengine.spigotmc.currency;
 
 import io.github.mcengine.api.currency.MCEngineCurrencyApi;
 import io.github.mcengine.common.currency.command.MCEngineCurrencyCommonCommand;
+import io.github.mcengine.common.currency.listener.hook.MCEngineCurrencyCommonListenerHookHeadDB;
 import io.github.mcengine.common.currency.listener.MCEngineCurrencyCommonListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -36,6 +37,7 @@ public class MCEngineCurrency extends JavaPlugin {
 
         // Read SQL type from config (default to sqlite)
         String sqlType = getConfig().getString("database.type", "sqlite");
+        boolean hookHeadDB = getConfig().getBoolean("hook.HeadDB.enable", false);
 
         try {
             // Initialize currency API
@@ -49,6 +51,10 @@ public class MCEngineCurrency extends JavaPlugin {
             getCommand("currency").setExecutor(
                 new MCEngineCurrencyCommonCommand(currencyApi)
             );
+            if (hookHeadDB) {
+                // Pass currencyApi to the hook listener instead of "this"
+                getServer().getPluginManager().registerEvents(new MCEngineCurrencyCommonListenerHookHeadDB(currencyApi), this);
+            }
 
             getLogger().info("has been enabled using SQL type: " + sqlType);
         } catch (Exception e) {
