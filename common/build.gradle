@@ -3,6 +3,12 @@ plugins {
 }
 
 dependencies {
+    // Self Api
     compileOnly project(":mcengine-currency-api")
+
+    // Server Platform
     compileOnly 'org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT'
+
+    // Plugin Hook
+    compileOnly("com.arcaniax:HeadDatabase-API:1.3.2")
 }
