@@ -146,8 +146,8 @@ dependencies {
 
 // Root shadow JAR configuration
 shadowJar {
-    version = null
-    archiveClassifier = null
+    version = version
+    archiveClassifier = "RELEASE"
     archiveBaseName.set('MCEngineCurrency')
 }
 
