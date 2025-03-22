@@ -30,6 +30,7 @@ public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface 
         this.dbUser = plugin.getConfig().getString("mysql.user", "root");
         this.dbPassword = plugin.getConfig().getString("mysql.password", "");
         this.dbSSL = plugin.getConfig().getString("mysql.ssl", "false");
+        connect();
     }
 
     /**
@@ -38,7 +39,7 @@ public class MCEngineCurrencyApiMySQL implements MCEngineCurrencyApiDBInterface 
     public void connect() {
         String dbUrl = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useSSL=" + dbSSL + "&serverTimezone=UTC";
         try {
-            connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+            this.connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
             System.out.println("Connected to MySQL database");
         } catch (SQLException e) {
             System.err.println("Failed to connect to MySQL database: " + e.getMessage());

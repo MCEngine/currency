@@ -21,6 +21,7 @@ public class MCEngineCurrencyApiSQLite implements MCEngineCurrencyApiDBInterface
     public MCEngineCurrencyApiSQLite(Plugin plugin) {
         this.plugin = plugin;
         this.dbPath = plugin.getConfig().getString("sqlite.path", "currency.db");
+        connect();
     }
 
     /**
@@ -29,7 +30,7 @@ public class MCEngineCurrencyApiSQLite implements MCEngineCurrencyApiDBInterface
     public void connect() {
         try {
             String fullPath = plugin.getDataFolder().getAbsolutePath() + "/" + dbPath;
-            connection = DriverManager.getConnection("jdbc:sqlite:" + fullPath);
+            this.connection = DriverManager.getConnection("jdbc:sqlite:" + fullPath);
             plugin.getLogger().info("Connected to SQLite database at: " + fullPath);
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to connect to SQLite database: " + e.getMessage());
