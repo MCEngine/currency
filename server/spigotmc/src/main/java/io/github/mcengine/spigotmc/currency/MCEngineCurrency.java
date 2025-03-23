@@ -86,10 +86,17 @@ public class MCEngineCurrency extends JavaPlugin {
         }
     }
 
-    /* 
+    /*
+     * Return instance of MCEngineCurrency
+     */
+    public static MCEngineCurrency getInstance() {
+        return instance;
+    }
+
+    /*
      * Return instance of currencyApi
      */
-    public static MCEngineCurrencyApi getCurrencyApi() {
+    public static MCEngineCurrencyApi getApi() {
         return instance.currencyApi;
     }
 }
