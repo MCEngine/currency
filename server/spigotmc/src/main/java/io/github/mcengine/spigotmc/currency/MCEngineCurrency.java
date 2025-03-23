@@ -15,6 +15,7 @@ import java.io.File;
  */
 public class MCEngineCurrency extends JavaPlugin {
 
+    private static MCEngineCurrency instance;
     private MCEngineCurrencyApi currencyApi;
 
     /**
@@ -32,6 +33,7 @@ public class MCEngineCurrency extends JavaPlugin {
      */
     @Override
     public void onEnable() {
+        instance = this;
         // Save default config if not already present
         saveDefaultConfig();
 
@@ -82,5 +84,12 @@ public class MCEngineCurrency extends JavaPlugin {
                 e.printStackTrace();
             }
         }
+    }
+
+    /* 
+     * Return instance of currencyApi
+     */
+    public static MCEngineCurrencyApi getCurrencyApi() {
+        return instance.currencyApi;
     }
 }
