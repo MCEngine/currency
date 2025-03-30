@@ -4,6 +4,7 @@ main: io.github.mcengine.spigotmc.currency.MCEngineCurrency
 author: MCEngine
 description: MCEngine Currency
 api-version: 1.18
+softdepend: [HeadDatabase]
 commands:
   currency:
     description: Add, Check, Pay

@@ -4,6 +4,7 @@ main: io.github.mcengine.papermc.currency.MCEngineCurrency
 author: MCEngine
 description: MCEngine Currency
 api-version: 1.18
+softdepend: [HeadDatabase]
 commands:
   currency:
     description: Add, Check, Pay
