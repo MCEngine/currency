@@ -3,7 +3,7 @@ rootProject.name = 'mcengine-currency'
 // Define base directories for subprojects
 def coreProjects = ['mcengine-currency-api', 'common']
 
-def serverProjects = ['spigotmc']
+def serverProjects = ['spigotmc', 'papermc']
 
 // Include core projects
 coreProjects.each { include it }

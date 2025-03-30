@@ -1,10 +1,10 @@
 name: MCEngineCurrency
 version: ${version}
-main: io.github.mcengine.spigotmc.currency.MCEngineCurrency
+main: io.github.mcengine.papermc.currency.MCEngineCurrency
 author: MCEngine
 description: MCEngine Currency
 api-version: 1.18
 commands:
   currency:
     description: Add, Check, Pay
-    usage: /currency <add || check || pay>
+    usage: /currency <add|check|pay>

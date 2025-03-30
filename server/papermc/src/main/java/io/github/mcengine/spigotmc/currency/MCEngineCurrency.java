@@ -1,4 +1,4 @@
-package io.github.mcengine.spigotmc.currency;
+package io.github.mcengine.paper.currency;
 
 import io.github.mcengine.api.currency.MCEngineCurrencyApi;
 import io.github.mcengine.common.currency.command.MCEngineCurrencyCommonCommand;
@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 
 /**
- * The {@code MCEngineCurrency} class is a SpigotMC plugin for handling a currency system.
+ * The {@code MCEngineCurrency} class is a PaperMC plugin for handling a currency system.
  * It integrates with multiple database types (SQLite, MySQL) and provides API utilities
  * for managing currency-related operations.
  */
