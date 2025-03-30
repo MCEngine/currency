@@ -17,15 +17,8 @@ public class ItemManager {
     private static final NamespacedKey CASH_KEY = new NamespacedKey("mcengine", "cash");
     private static final NamespacedKey COIN_TYPE_KEY = new NamespacedKey("mcengine", "coin_type");
 
-    public static ItemStack createCashItem(String coinType, double amount) {
+    public static ItemStack createCashItem(String headId, String coinType, double amount) {
         HeadDatabaseAPI hdb = new HeadDatabaseAPI();
-        // Customize head id based on coin type
-        String headId = switch (coinType) {
-            case "copper" -> "40534";
-            case "silver" -> "51708";
-            case "gold" -> "56431";
-            default -> "63066";
-        };
 
         ItemStack item = hdb.getItemHead(headId);
         if (item == null) {

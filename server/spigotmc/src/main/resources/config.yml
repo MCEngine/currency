@@ -15,3 +15,9 @@ database:
 hook:
   HeadDB:
     enable: false
+
+texture:
+  coin: 63066
+  copper: 40534
+  silver: 51708
+  gold: 56431

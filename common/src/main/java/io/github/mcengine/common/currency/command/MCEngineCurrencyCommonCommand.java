@@ -20,6 +20,7 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
 
     private Plugin plugin;
     private final MCEngineCurrencyApi currencyApi;
+    private String coinHeadId, copperHeadId, silverHeadId, goldHeadId;
 
     /**
      * Constructs a new currency command handler.
@@ -29,6 +30,10 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
     public MCEngineCurrencyCommonCommand(Plugin plugin, MCEngineCurrencyApi currencyApi) {
         this.plugin = plugin;
         this.currencyApi = currencyApi;
+        this.coinHeadId = plugin.getConfig().getString("texture.coin", "63066");
+        this.copperHeadId = plugin.getConfig().getString("texture.copper", "40534");
+        this.silverHeadId = plugin.getConfig().getString("texture.silver", "51708");
+        this.goldHeadId = plugin.getConfig().getString("texture.gold", "56431");
     }
 
     /**
@@ -151,6 +156,13 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
             return true;
         }
 
+        String headId = switch (coinType) {
+            case "copper" -> copperHeadId;
+            case "silver" -> silverHeadId;
+            case "gold" -> goldHeadId;
+            default -> coinHeadId;
+        };
+
         double amount;
         try {
             amount = Double.parseDouble(args[2]);
@@ -174,7 +186,7 @@ public class MCEngineCurrencyCommonCommand implements CommandExecutor {
         currencyApi.minusCoin(player.getUniqueId(), coinType, amount);
 
         // Create the cash item and give it to the player
-        ItemStack cashItem = ItemManager.createCashItem(coinType, amount);
+        ItemStack cashItem = ItemManager.createCashItem(headId, coinType, amount);
         player.getInventory().addItem(cashItem);
 
         player.sendMessage(ChatColor.GREEN + "You converted " + amount + " " + coinType + " into a cash item.");
