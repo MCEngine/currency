@@ -73,7 +73,7 @@ subprojects {
     }
 
     // SpigotMC-specific resource processing (for plugin.yml)
-    if (project.name == 'spigotmc' && project.name == 'papermc') {
+    if (project.name == 'spigotmc' || project.name == 'papermc') {
         processResources {
             def props = [version: version]
             inputs.properties(props)
