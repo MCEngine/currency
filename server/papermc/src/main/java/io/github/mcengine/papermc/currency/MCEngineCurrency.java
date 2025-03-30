@@ -1,4 +1,4 @@
-package io.github.mcengine.paper.currency;
+package io.github.mcengine.papermc.currency;
 
 import io.github.mcengine.api.currency.MCEngineCurrencyApi;
 import io.github.mcengine.common.currency.command.MCEngineCurrencyCommonCommand;
