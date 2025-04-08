@@ -16,7 +16,7 @@ public class MCEngineCurrencyApp {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("MCEngine Currency");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(1920, 1080);
+            frame.setSize(600, 400);
             frame.setLocationRelativeTo(null);
 
             editorPane = new JEditorPane();
@@ -56,7 +56,8 @@ public class MCEngineCurrencyApp {
         String content = switch (page) {
             case "command" -> Command.getHtml();
             case "donation" -> Donation.getHtml();
-            case "home" -> "<p style='color: #212529;'>This is the homepage for MCEngine Currency.</p>";
+            case "home" -> Home.getHtml();
+            case "listener" -> Listener.getHtml();
             default -> "<p style='color: red;'>Page not found</p>";
         };
 

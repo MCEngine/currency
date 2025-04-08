@@ -7,6 +7,7 @@ public class Header {
             <div style='margin: 20px 0;'>
                 <a href='page:home' style='margin: 0 15px; color: #0d6efd; text-decoration: none;'>Home</a>
                 <a href='page:command' style='margin: 0 15px; color: #0d6efd; text-decoration: none;'>Command</a>
+                <a href='page:listener' style='margin: 0 15px; color: #0d6efd; text-decoration: none;'>Listener</a>
                 <a href='page:donation' style='margin: 0 15px; color: #0d6efd; text-decoration: none;'>Donation</a>
             </div>
         """;

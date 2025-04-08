@@ -16,10 +16,10 @@ public class Command {
             '>
 commands:
   /currency:
-    add <player> <coinType> <amount>     # Add currency to a player (requires permission)
-    cash <coinType> <amount>             # Convert currency to a HeadDB item
-    check <coinType>                     # Check your current currency balance
-    pay <player> <amount> <coinType> <note>  # Pay currency to another player
+    add <player> <coinType> <amount>
+    cash <coinType> <amount>
+    check <coinType>
+    pay <player> <amount> <coinType> <note>
             </pre>
             <ul style='text-align: left; max-width: 700px; margin: 20px auto;'>
                 <li><strong>/currency add &lt;player&gt; &lt;coinType&gt; &lt;amount&gt;</strong> - Add currency to a player (Admin only)</li>
