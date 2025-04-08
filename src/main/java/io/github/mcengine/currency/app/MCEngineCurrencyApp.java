@@ -7,65 +7,74 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 
+import io.github.mcengine.currency.app.page.*;
+
 public class MCEngineCurrencyApp {
+    private static JEditorPane editorPane;
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("MCEngine Currency");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(500, 400);
+            frame.setSize(1920, 1080);
             frame.setLocationRelativeTo(null);
 
-            String htmlContent = """
-                <html>
-                <body style='
-                    font-family: "Segoe UI", Roboto, Arial, sans-serif;
-                    text-align: center;
-                    padding: 30px;
-                    background-color: #f8f9fa;
-                    color: #212529;
-                '>
-                    <h2 style='color: black;'>Welcome to <span style="font-weight: 600;">MCEngine Currency</span></h2>
-                    <p style='margin: 10px 0;'>
-                    <a href='https://mcengine.github.io/currency-website' style='
-                        text-decoration: none;
-                        color: #0d6efd;
-                        font-weight: 500;
-                    '>Visit Website</a>
-                    </p>
-                    <hr style='margin: 20px auto; border: none; border-top: 1px solid #dee2e6; width: 80%;' />
-                    <p style='margin-top: 20px;'>
-                    <a href='https://github.com/MCEngine' style='margin: 0 10px; color: #0d6efd; text-decoration: none;'>Organization</a>
-                    |
-                    <a href='https://github.com/MCEngine/currency' style='margin: 0 10px; color: #0d6efd; text-decoration: none;'>Repository</a>
-                    |
-                    <a href='https://mcengine.github.io/donation-website' style='margin: 0 10px; color: #0d6efd; text-decoration: none;'>Donation</a>
-                    </p>
-                </body>
-                </html>
-                """;
-
-            JEditorPane editorPane = new JEditorPane();
+            editorPane = new JEditorPane();
             editorPane.setEditorKit(new HTMLEditorKit());
-            editorPane.setText(htmlContent);
             editorPane.setEditable(false);
-            editorPane.setOpaque(false);
             editorPane.setFocusable(false);
             editorPane.setContentType("text/html");
 
+            loadPage("home");
+
             editorPane.addHyperlinkListener(e -> {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    try {
-                        Desktop.getDesktop().browse(URI.create(e.getURL().toString()));
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+                    String url = e.getDescription();
+                    if (url.startsWith("page:")) {
+                        loadPage(url.substring(5));
+                    } else {
+                        try {
+                            Desktop.getDesktop().browse(URI.create(url));
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(null,
+                                    "Failed to open link: " + ex.getMessage(),
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 }
             });
 
             JScrollPane scrollPane = new JScrollPane(editorPane);
-            scrollPane.setBorder(null);
+            scrollPane.setBorder(BorderFactory.createEmptyBorder());
             frame.getContentPane().add(scrollPane);
+
             frame.setVisible(true);
         });
+    }
+
+    private static void loadPage(String page) {
+        String content = switch (page) {
+            case "command" -> Command.getHtml();
+            case "donation" -> Donation.getHtml();
+            case "home" -> "<p style='color: #212529;'>This is the homepage for MCEngine Currency.</p>";
+            default -> "<p style='color: red;'>Page not found</p>";
+        };
+
+        String htmlContent = """
+            <html>
+            <body style='
+                font-family: "Segoe UI", Roboto, Arial, sans-serif;
+                text-align: center;
+                padding: 30px;
+                background-color: #f8f9fa;
+                color: #212529;
+            '>
+        """ + Header.getHtml() + content + Footer.getHtml() + """
+            </body>
+            </html>
+        """;
+
+        editorPane.setText(htmlContent);
+        editorPane.setCaretPosition(0); // Scroll to top
     }
 }
